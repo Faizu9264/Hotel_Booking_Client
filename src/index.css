@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+  
+  @keyframes borderAnimation {
+    0% {
+      border-width: 2px;
+    }
+    50% {
+      border-width: 4px;
+    }
+    100% {
+      border-width: 2px;
+    }
+  }
+  
+  .input-with-animation {
+    animation: borderAnimation 2s infinite;
+  }
+  
