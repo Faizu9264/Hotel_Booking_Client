@@ -4,12 +4,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import  {RootState}  from '../../redux/store';
-import { clearUserData } from '../../redux/actions/authActions'; 
+// import { clearUserData } from '../../redux/actions/authActions'; 
 
 
 const VerifyOTP: React.FC = () => {
   const dispatch = useDispatch();
-  const userData = useSelector((state: RootState) => state.user.userData); 
+  const authState = useSelector((state: RootState) => state.auth);
+  const user = authState.user;
 
   const [enteredOtp, setEnteredOtp] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -18,6 +19,7 @@ const VerifyOTP: React.FC = () => {
 
   const handleVerify = async () => {
     try {
+      console.log(user);
       const { email } = location.state as { email: string };
 
       console.log(email, enteredOtp);
@@ -30,7 +32,7 @@ const VerifyOTP: React.FC = () => {
       await api.completeSignup();
 
       // Clear user data from Redux
-      dispatch(clearUserData());
+      // dispatch(clearUserData());
 
       if (response) {
         navigate('/login');

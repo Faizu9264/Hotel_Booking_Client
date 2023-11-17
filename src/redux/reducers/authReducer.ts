@@ -1,18 +1,27 @@
-// src/redux/reducers/authReducer.ts
-import { VERIFY_OTP_SUCCESS } from '../actions/authActions';
+// authReducer.ts
 
-const initialState = {
-  // Your initial state...
+import { SET_USER_DATA, CLEAR_USER_DATA } from '../actions/authActions';
+
+interface AuthState {
+  user: any | null;
+}
+
+const initialState: AuthState = {
+  user: null,
 };
 
 const authReducer = (state = initialState, action: any) => {
   switch (action.type) {
-    case VERIFY_OTP_SUCCESS:
-      // Handle the success action, if needed
-      return state; // Or return the updated state
-
-    // Other cases...
-
+    case SET_USER_DATA:
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case CLEAR_USER_DATA:
+      return {
+        ...state,
+        user: null,
+      };
     default:
       return state;
   }

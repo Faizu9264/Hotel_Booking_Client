@@ -2,7 +2,7 @@
 
 const API_BASE_URL = 'http://localhost:5000/user';
 
-let userData: any = {}; // Store user data globally in this example, you might want to use a more structured state management
+let userData: any = {}; 
 
 const api = {
   sendOTP: async (email: string) => {
@@ -72,6 +72,28 @@ const api = {
   setUserData: (data: any) => {
     userData = { ...userData, ...data };
   },
+
+  login: async (email: string, password: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+      }
+
+      return response.json();
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
 };
+
 
 export default api;
