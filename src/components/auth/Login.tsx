@@ -11,7 +11,7 @@ import SignupModal from "../common/SignupModal";
 import LoginModal from '../common/LoginModal';
 
 interface LoginProps {
-  onRequestClose: () => void;
+  onRequestClose: (modalIdentifier: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onRequestClose }) => {
@@ -69,7 +69,9 @@ const Login: React.FC<LoginProps> = ({ onRequestClose }) => {
       dispatch(setUserData({ email, ...user }));
       if (user.message === 'Login successful') {
         toast.success('Login successful');
-        onRequestClose();
+        onRequestClose('login');
+        onRequestClose('otp');
+        onRequestClose('signup');
         navigate('/');
       } else {
         toast.error('Invalid credentials. Please try again.');

@@ -6,9 +6,10 @@ import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LoginModal from '../common/LoginModal';
+import OTPModal from '../common/OTPModal';
 
 interface SignupProps {
-  onRequestClose: () => void;
+  onRequestClose: (modalIdentifier: string) => void;
 }
 
 interface UserData {
@@ -31,24 +32,23 @@ const Signup: React.FC<SignupProps> = ({ onRequestClose }) => {
   const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
   const [signupModalOpen, setSignupModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
-
+  const [otpModalOpen, setOTPModalOpen] = useState(false); 
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const handleSignup = async () => {
     try {
       setUsernameError(null);
       setEmailError(null);
       setPasswordError(null);
       setConfirmPasswordError(null);
-
+  
       if (!username) {
         setUsernameError('Username is required');
         toast.error('Username is required');
         return;
       }
-
+  
       if (!email) {
         setEmailError('Email is required');
         toast.error('Email is required');
@@ -58,7 +58,7 @@ const Signup: React.FC<SignupProps> = ({ onRequestClose }) => {
         toast.error('Invalid email format');
         return;
       }
-
+  
       if (!password) {
         setPasswordError('Password is required');
         toast.error('Password is required');
@@ -72,25 +72,49 @@ const Signup: React.FC<SignupProps> = ({ onRequestClose }) => {
         );
         return;
       }
-
+  
       if (password !== confirmPassword) {
         setConfirmPasswordError('Passwords do not match');
         toast.error('Passwords do not match');
         return;
       }
-
+  
       const userData: UserData = { username, email, password, confirmPassword };
-
-
-      dispatch(setUserData({ username, email }));
-      const response = await api.sendOTP(email);
+  
       api.setUserData({ email, username, password });
-      navigate('/verify-otp', { state: { email } });
+      dispatch(setUserData({ username, email }));
+      // onRequestClose('signup');
+      const otpsent = await api.sendOTP(email);
+  
+      // if (otpsent) {
+      //   // OTP sent successfully, close the signup modal
+      //   console.log('OTP sent successfully');
+        
+      //   onRequestClose('signup');
+      //   // Open the OTP modal
+      //   setOTPModalOpen(true);
+      //   console.log('Opend  OTP modal');
+        
+      // }
+      if (otpsent) {
+        console.log('OTP sent successfully');
+        // Open the OTP modal
+        openOTPModal();
+      } else {
+        console.log('Failed to send OTP');
+      }
+  
     } catch (error: any) {
       console.error('Signup failed', error.message);
       toast.error(`Signup failed: ${error.message}`);
     }
   };
+  
+  const openOTPModal = () => {
+    console.log('Opening OTP modal');
+    setOTPModalOpen(true);
+  };
+  
 
   const togglePasswordVisibility = (field: string) => {
     if (field === 'password') {
@@ -266,7 +290,7 @@ const Signup: React.FC<SignupProps> = ({ onRequestClose }) => {
         </p>
       </div>
       <LoginModal isOpen={loginModalOpen} onRequestClose={closeLoginModal}></LoginModal>
-
+      <OTPModal isOpen={otpModalOpen} onRequestClose={() => setOTPModalOpen(false)} />
     </main>
   );
 };

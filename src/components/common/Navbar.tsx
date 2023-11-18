@@ -52,7 +52,7 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
       </div>
 
       <div className="hidden md:flex items-center space-x-4 flex-grow">
-        <div className="flex justify-center space-x-4 flex-grow"> {/* Updated this line */}
+        <div className="flex justify-center space-x-4 flex-grow"> 
           <NavLink to="/" className="text-white hover:text-gray-300 transition duration-300">
             Home
           </NavLink>
@@ -155,11 +155,11 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
             )}
             {!user && (
               <>
-               <button onClick={handleSignupButtonClick} className="text-blue-500 hover:text-gray-500 transition duration-300 bg-white p-2 rounded border border-gray-300">
+               <NavLink to="" onClick={handleSignupButtonClick} className="block text-white hover:text-gray-300 transition duration-300 py-2">
         Sign Up
-      </button>
+      </NavLink>
                 <div className="flex space-x-4 items-center">
-          <button onClick={handleLoginButtonClick}  className="text-blue-500 hover:text-gray-500 transition duration-300 bg-white p-2 rounded border border-gray-300" >
+          <button onClick={handleLoginButtonClick}  className="block text-white hover:text-gray-300 transition duration-300 py-2" >
             Log In
           </button>
         </div>

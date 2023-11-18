@@ -7,10 +7,14 @@ import SignupModal from "../components/common/SignupModal";
 import Signup from "../components/auth/Signup";
 import LoginModal from "../components/common/LoginModal"; 
 import Login from "../components/auth/Login";
+import VerifyOTP from "../components/auth/VerifyOTP";
+import OTPModal from "../components/common/OTPModal";
+import { Navigate } from "react-router-dom";
 
 const AppRouter: React.FC = () => {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
+  const [otpModalOpen, setOTModalOpen] = useState(false);
 
   const openSignupModal = () => {
     setIsSignupModalOpen(true);
@@ -19,16 +23,23 @@ const AppRouter: React.FC = () => {
   const closeSignupModal = () => {
     setIsSignupModalOpen(false);
   };
+
   const openLoginModal = () => {
-    console.log('Opening login modal');
     setLoginModalOpen(true);
   };
   
   const closeLoginModal = () => {
-    console.log('Closing login modal');
     setLoginModalOpen(false);
   };
-  
+
+  const openOTPModal = () => {
+    setOTModalOpen(true);
+  };
+
+  const closeOTPModal = () => {
+    setOTModalOpen(false);
+  };
+
 
   return (
     <div>
@@ -42,15 +53,22 @@ const AppRouter: React.FC = () => {
             </SignupModal>
           }
         />
-    <Route
-  path="/login"
-  element={
-    <LoginModal isOpen={loginModalOpen} onRequestClose={closeLoginModal}>
-      <Login onRequestClose={closeLoginModal} />
-    </LoginModal>
-  }
-/>
-
+        <Route
+          path="/login"
+          element={
+            <LoginModal isOpen={loginModalOpen} onRequestClose={closeLoginModal}>
+              <Login onRequestClose={closeLoginModal} />
+            </LoginModal>
+          }
+        />
+        <Route
+          path="/verify-otp"
+          element={
+              <OTPModal isOpen={otpModalOpen} onRequestClose={closeOTPModal}>
+                <VerifyOTP onRequestClose={closeOTPModal}/>
+              </OTPModal>
+          }
+        />
       </Routes>
     </div>
   );

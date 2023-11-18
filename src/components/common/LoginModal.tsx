@@ -4,7 +4,7 @@ import Login from '../auth/Login';
 
 interface LoginModalProps {
   isOpen: boolean;
-  onRequestClose: () => void;
+  onRequestClose: (modalIdentifier: string) => void;
   children?: React.ReactNode;
 }
 
@@ -16,7 +16,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onRequestClose, childre
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={() => onRequestClose('login')}
       contentLabel="Login Modal"
       overlayClassName="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
       className="relative bg-white rounded-md shadow-md max-w-md w-full p-0 md:p-4"      
@@ -29,7 +29,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onRequestClose, childre
           <button
             type="button"
             className="text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex items-center justify-center dark:hover:bg-gray-200 dark:hover:text-gray-900"
-            onClick={onRequestClose}
+            onClick={() => onRequestClose('login')}
           >
             <svg
               className="w-4 h-4"
@@ -50,7 +50,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onRequestClose, childre
           </button>
         </div>
         <div className="p-4 md:p-5">
-          <Login onRequestClose={onRequestClose} />
+          <Login onRequestClose={() => onRequestClose('login')} />
         </div>
       </div>
     </Modal>

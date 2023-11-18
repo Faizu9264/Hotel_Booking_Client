@@ -5,17 +5,19 @@ import Signup from '../auth/Signup';
 
 interface SignupModalProps {
   isOpen: boolean;
-  onRequestClose: () => void;
+  onRequestClose: (modalIdentifier: string) => void;
   children?: React.ReactNode;
 }
 
 Modal.setAppElement('#root');
 
 const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onRequestClose, children }) => {
+
+  
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={() => onRequestClose('signup')}
       contentLabel="Signup Modal"
       overlayClassName="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
       className="relative bg-white rounded-md shadow-md max-w-md w-full p-0 md:p-4"
@@ -28,7 +30,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onRequestClose, child
           <button
             type="button"
             className="text-gray-400 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex items-center justify-center dark:hover:bg-gray-200 dark:hover:text-gray-900"
-            onClick={onRequestClose}
+            onClick={() => onRequestClose('signup')}
           >
              <svg
               className="w-4 h-4"
@@ -49,7 +51,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onRequestClose, child
         </div>
         <div className="p-4 md:p-5">
           {/* Pass onRequestClose to the Signup component */}
-          <Signup onRequestClose={onRequestClose} />
+          <Signup onRequestClose={() => onRequestClose('signup')} />
         </div>
       </div>
     </Modal>
