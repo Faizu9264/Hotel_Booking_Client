@@ -37,25 +37,6 @@ const GoogleOneTapButton: React.FC = () => {
     setIsInitialized(true);
   };
 
-//     console.log('Google One Tap response:', response);
-  
-//     try {
-//       const token = response.credential;
-//       const decodedToken: DecodedToken = jwtDecode(token);
-//       console.log('Decoded Token:', decodedToken);
-  
-//       const { sub: email, given_name: username, picture: profileImage } = decodedToken;
-//       console.log('User Details:', { email, username, profileImage });
-  
-//       dispatch(setUserData({ email, username, profileImage, token, isGoogle: true }));
-//       navigate('/');
-//     } catch (error) {
-//       console.error('Error decoding token:', error);
-//       toast.error('Error decoding token');
-//     }
-//   };
-  
-
 const handleResponse = async (response: any) => {
     console.log('Google One Tap response:', response);
   

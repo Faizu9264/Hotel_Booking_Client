@@ -1,8 +1,8 @@
-// src/services/api.ts
+import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/user';
 
-let userData: any = {}; 
+let userData: any = {};
 
 const api = {
   sendOTP: async (email: string) => {
@@ -12,7 +12,7 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', 
+        credentials: 'include',
         body: JSON.stringify({ email }),
       });
 
@@ -34,8 +34,8 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', 
-        body: JSON.stringify({ email: userData.email, otp }), 
+        credentials: 'include',
+        body: JSON.stringify({ email: userData.email, otp }),
       });
 
       if (!response.ok) {
@@ -56,8 +56,8 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', 
-        body: JSON.stringify(userData), 
+        credentials: 'include',
+        body: JSON.stringify(userData),
       });
 
       if (!response.ok) {
@@ -71,7 +71,6 @@ const api = {
     }
   },
 
-  // Setter function to update user data during signup
   setUserData: (data: any) => {
     userData = { ...userData, ...data };
   },
@@ -83,7 +82,7 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', 
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -97,14 +96,15 @@ const api = {
       throw new Error(error.message);
     }
   },
-  googleLogin: async (email: string, username: string,token: string, isGoogle: boolean) => {
+
+  googleLogin: async (email: string, username: string, token: string, isGoogle: boolean) => {
     try {
       const response = await fetch(`${API_BASE_URL}/google-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', 
+        credentials: 'include',
         body: JSON.stringify({ email, username, token, isGoogle }),
       });
 
@@ -118,8 +118,15 @@ const api = {
       throw new Error(error.message);
     }
   },
+
+  resendOTP: async (email: string): Promise<any> => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/resend-otp`, { email });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
-
-
 
 export default api;
