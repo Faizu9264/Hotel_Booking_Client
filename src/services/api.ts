@@ -12,6 +12,7 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', 
         body: JSON.stringify({ email }),
       });
 
@@ -33,6 +34,7 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', 
         body: JSON.stringify({ email: userData.email, otp }), 
       });
 
@@ -54,6 +56,7 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', 
         body: JSON.stringify(userData), 
       });
 
@@ -80,6 +83,7 @@ const api = {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', 
         body: JSON.stringify({ email, password }),
       });
 
@@ -93,7 +97,29 @@ const api = {
       throw new Error(error.message);
     }
   },
+  googleLogin: async (email: string, username: string,token: string, isGoogle: boolean) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/google-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', 
+        body: JSON.stringify({ email, username, token, isGoogle }),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+      }
+
+      return response.json();
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
 };
+
 
 
 export default api;

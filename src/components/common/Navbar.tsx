@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { UserData } from "../../types/authTypes";
 import { Link } from "react-router-dom";
-import LoginModal from './LoginModal';
-import SignupModal from "./SignupModal";
+// import LoginModal from './LoginModal';
+// import SignupModal from "./SignupModal";
 import AvatarMenu from "./AvatarMenu"; 
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -25,20 +25,15 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
     setMenuOpen(!menuOpen);
   };
   const handleLoginButtonClick = () => {
-    setLoginModalOpen(true);
+    navigate('/login')
   };
 
-  const handleLoginModalClose = () => {
-    setLoginModalOpen(false);
-  };
 
   const handleSignupButtonClick = () => {
-    setSignupModalOpen(true);
+    navigate('/signup')
   };
 
-  const handleSignupModalClose = () => {
-    setSignupModalOpen(false);
-  };
+
 
   
   
@@ -168,8 +163,8 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
           </div>
         </div>
       )}
-      <SignupModal isOpen={signupModalOpen} onRequestClose={handleSignupModalClose} />
-      <LoginModal isOpen={loginModalOpen} onRequestClose={handleLoginModalClose} />
+      {/* <SignupModal isOpen={signupModalOpen} onRequestClose={handleSignupModalClose} />
+      <LoginModal isOpen={loginModalOpen} onRequestClose={handleLoginModalClose} /> */}
     </nav>
   );
 };

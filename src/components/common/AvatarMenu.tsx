@@ -12,6 +12,8 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
+    console.log('myuser',user);
+    
     dispatch(logoutUser());
     navigate('/');
   };
@@ -53,7 +55,7 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
           {/* Dropdown content */}
           {menuOpen && (
             <ul className="bg-white top-14 right-0 mt-6 space-y-6 absolute border rounded-md w-52 shadow-md space-y-0 mt-0">
-              <li><p className="block text-gray-600 hover:text-gray-900 p-3">{user.email}</p></li>
+              <li><p className="block text-gray-600 hover:text-gray-900 p-3">{user.username?user.username:user.email}</p></li>
               {navigation.map((item, idx) => (
                 <li key={idx}>
                   <NavLink

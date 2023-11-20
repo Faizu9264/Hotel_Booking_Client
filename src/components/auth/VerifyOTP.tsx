@@ -5,7 +5,8 @@ import api from '../../services/api';
 import OTPModal from '../common/OTPModal';
 import { useDispatch, useSelector } from 'react-redux';
 import  {RootState}  from '../../redux/store';
-import LoginModal from '../common/LoginModal';
+import { toast } from 'react-toastify';
+// import LoginModal from '../common/LoginModal';
 
 interface VerifyOTPProps {
   onRequestClose: (modalIdentifier: string) => void;
@@ -17,7 +18,6 @@ const VerifyOTP: React.FC<VerifyOTPProps> = ({ onRequestClose }) => {
   const user = authState.user;
   const [enteredOtp, setEnteredOtp] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,16 +28,14 @@ const VerifyOTP: React.FC<VerifyOTPProps> = ({ onRequestClose }) => {
 
       console.log(user.email, enteredOtp);
       const response = await api.verifyOTP(enteredOtp);
-      console.log('OTP verification successful', response);
+      // console.log('OTP verification successful', response);
 
     const completed =  await api.completeSignup();
-
       // dispatch(clearUserData());
 
-      // onRequestClose('otp');
-      if (completed && response) {
-        setLoginModalOpen(true);
-        // navigate('/login');
+      if (completed && response) {   
+       toast.success('OTP verification successful')
+        navigate('/login',user.email);
       } else {
         setError('Invalid OTP. Please try again.');
       }
@@ -45,15 +43,9 @@ const VerifyOTP: React.FC<VerifyOTPProps> = ({ onRequestClose }) => {
       setError(error.message || 'Error verifying OTP');
     }
   };
-  const handleLoginClick = () => {
-    setLoginModalOpen(true);
-  };
 
-  const closeLoginModal = () => {
-    setLoginModalOpen(false);
-  };
   return (
-    <main className="w-full flex flex-col items-center justify-center px-4 my-16">
+    <main className="w-full flex flex-col items-center justify-center px-4 my-5">
       <div className="max-w-sm w-full text-gray-600 border border-gray-300 shadow-md rounded-lg p-4">
         <div className="text-center pb-4">
           <div className="mt-2">
@@ -84,7 +76,7 @@ const VerifyOTP: React.FC<VerifyOTPProps> = ({ onRequestClose }) => {
           </button>
         </form>
       </div>
-      <LoginModal isOpen={loginModalOpen} onRequestClose={closeLoginModal}></LoginModal>
+      {/* <LoginModal isOpen={loginModalOpen} onRequestClose={closeLoginModal}></LoginModal> */}
     </main>
   );
 };
