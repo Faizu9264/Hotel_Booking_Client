@@ -2,35 +2,35 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { UserData } from "../../types/authTypes";
 import { Link } from "react-router-dom";
-// import LoginModal from './LoginModal';
-// import SignupModal from "./SignupModal";
+import { RootState } from '../../redux/store';
 import AvatarMenu from "./AvatarMenu"; 
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from "../../redux/actions/authActions";
-
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoginStatus } from '../../redux/actions/authActions';
 const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [signupModalOpen, setSignupModalOpen] = useState(false);
+
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    dispatch(setLoginStatus(false));
     navigate('/');
   };
   const handleMenuToggle = () => {
     setMenuOpen(!menuOpen);
   };
   const handleLoginButtonClick = () => {
-    navigate('/login')
+    navigate('/user/login')
   };
 
 
   const handleSignupButtonClick = () => {
-    navigate('/signup')
+    navigate('/user/signup')
   };
 
 
@@ -51,15 +51,15 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
           <NavLink to="/" className="text-white hover:text-gray-300 transition duration-300">
             Home
           </NavLink>
-          <NavLink to="/about" className="text-white hover:text-gray-300 transition duration-300">
+          <NavLink to="/user/about" className="text-white hover:text-gray-300 transition duration-300">
             About
           </NavLink>
-          <NavLink to="/contact" className="text-white hover:text-gray-300 transition duration-300">
+          <NavLink to="/user/contact" className="text-white hover:text-gray-300 transition duration-300">
             Contact
           </NavLink>
         </div>
 
-        {user ? (
+        {user&&isLoggedIn ? (
           <>
             <AvatarMenu user={user} />
           </>
@@ -71,14 +71,13 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
           <button onClick={handleLoginButtonClick}  className="text-blue-500 hover:text-gray-500 transition duration-300 bg-white p-2 rounded border border-gray-300">
             Log In
           </button>
-        </div>
-        
+        </div>       
         )}
       </div>
 
 
         <div className="md:hidden flex items-center">
-          {user ? (
+          {user&&isLoggedIn ? (
             <>
               <img
                 src={user.profileImage || "/logo/profile.png"}
@@ -129,18 +128,18 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
       {menuOpen && (
         <div className="md:hidden bg-blue-500">
           <div className="container mx-auto py-2">
-            <NavLink to="/home" className="block text-white hover:text-gray-300 transition duration-300 py-2">
+            <NavLink to="/" className="block text-white hover:text-gray-300 transition duration-300 py-2">
               Home
             </NavLink>
-            <NavLink to="/about" className="block text-white hover:text-gray-300 transition duration-300 py-2">
+            <NavLink to="/user/about" className="block text-white hover:text-gray-300 transition duration-300 py-2">
               About
             </NavLink>
-            <NavLink to="/contact" className="block text-white hover:text-gray-300 transition duration-300 py-2">
+            <NavLink to="/user/contact" className="block text-white hover:text-gray-300 transition duration-300 py-2">
               Contact
             </NavLink>
-            {user && (
+            {user&&isLoggedIn && (
               <>
-                <NavLink to="/profile" className="block text-white hover:text-gray-300 transition duration-300 py-2">
+                <NavLink to="/user/profile" className="block text-white hover:text-gray-300 transition duration-300 py-2">
                   Profile
                 </NavLink>
                 <NavLink to="" onClick={handleLogout} className="block text-white hover:text-gray-300 transition duration-300 py-2">
@@ -150,9 +149,9 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
             )}
             {!user && (
               <>
-               <NavLink to="" onClick={handleSignupButtonClick} className="block text-white hover:text-gray-300 transition duration-300 py-2">
+               <button  onClick={handleSignupButtonClick} className="block text-white hover:text-gray-300 transition duration-300 py-2">
         Sign Up
-      </NavLink>
+      </button>
                 <div className="flex space-x-4 items-center">
           <button onClick={handleLoginButtonClick}  className="block text-white hover:text-gray-300 transition duration-300 py-2" >
             Log In

@@ -2,13 +2,14 @@
 
 import { combineReducers } from 'redux';
 import authReducer from './reducers/authReducer';
-// import userReducer from './reducers/userReducer';
+import hotelReducer from './reducers/hotelReducer';
 import { configureStore } from '@reduxjs/toolkit';
+import adminReducer from './reducers/adminReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  // user: userReducer,
-
+  hotel: hotelReducer,
+  admin:adminReducer
 });
 
 const store = configureStore({

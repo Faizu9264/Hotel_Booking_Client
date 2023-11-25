@@ -5,6 +5,12 @@ import { UserData } from '../../types/authTypes';
 export const SET_USER_DATA = 'SET_USER_DATA';
 export const CLEAR_USER_DATA = 'CLEAR_USER_DATA';
 
+export const SET_LOGIN_STATUS = 'SET_LOGIN_STATUS';
+
+export const setLoginStatus = (isLoggedIn: boolean): AnyAction => ({
+  type: SET_LOGIN_STATUS,
+  payload: isLoggedIn,
+});
 export const setUserData = (userData: Partial<UserData>): AnyAction => ({
   type: SET_USER_DATA,
   payload: userData,

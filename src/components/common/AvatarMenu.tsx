@@ -32,7 +32,7 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
   }, []);
 
   const navigation = [
-    { title: "Profile", path: "/profile" },
+    { title: "Profile", path: "/user/profile" },
   ];
 
   return (

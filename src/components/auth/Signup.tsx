@@ -299,7 +299,7 @@ const Signup: React.FC = () => {
         <p className="text-center mt-2">
           Already have an account?{' '}
           <span
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/user/login')}
             className="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500"
           >
             Sign in

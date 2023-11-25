@@ -155,7 +155,7 @@ const VerifyOTP: React.FC<VerifyOTPProps> = ({ onRequestClose }) => {
 
       if (completed && response) {
         toast.success('OTP verification successful');
-        navigate('/login', user.email);
+        navigate('/user/login', user.email);
       } else {
         setError('Invalid OTP. Please try again.');
       }

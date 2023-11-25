@@ -1,36 +1,22 @@
 // src/routers/router.tsx
 import React, { useState } from "react";
-import { Route, Routes } from 'react-router-dom';
-import App from "../App";
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Home from "../pages/Home";
-// import SignupModal from "../components/common/SignupModal"; 
 import Signup from "../components/auth/Signup";
-// import LoginModal from "../components/common/LoginModal"; 
 import Login from "../components/auth/Login";
-import VerifyOTP from "../components/auth/VerifyOTP";
 import OTPModal from "../components/common/OTPModal";
-import { Navigate } from "react-router-dom";
+import AdminLogin from "../components/auth/AdminLogin";
+import AdminDashboard from "../components/admin/AdminDashboard"; 
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import Addlocation from '../components/admin/components/location/AddLocation'
+import HotelListingTable from "../components/admin/components/Hotel/HotelListingTable";
 
-const AppRouter: React.FC = () => {
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
+
+
+
+const UserRouter: React.FC = () => {
   const [otpModalOpen, setOTModalOpen] = useState(false);
-
-  const openSignupModal = () => {
-    setIsSignupModalOpen(true);
-  };
-
-  const closeSignupModal = () => {
-    setIsSignupModalOpen(false);
-  };
-
-  const openLoginModal = () => {
-    setLoginModalOpen(true);
-  };
-  
-  const closeLoginModal = () => {
-    setLoginModalOpen(false);
-  };
 
   const openOTPModal = () => {
     setOTModalOpen(true);
@@ -40,33 +26,47 @@ const AppRouter: React.FC = () => {
     setOTModalOpen(false);
   };
 
+  return (
+    <Routes>  
+      <Route path="signup" element={<Signup />} />
+      <Route path="login" element={<Login />} />
+      <Route path="verify-otp" element={<OTPModal isOpen={otpModalOpen} onRequestClose={closeOTPModal} />} />
+    </Routes>
+  );
+};
+
+const AdminRouter: React.FC = () => {
+  const isAdminLoggedIn = useSelector((state: RootState) => state.admin.isAdminLoggedIn);
+  console.log(isAdminLoggedIn);
+
+  if (!isAdminLoggedIn) {
+    return (
+      <Routes>
+        <Route path="login" element={<AdminLogin />} />
+        <Route path="*" element={<Navigate to="/admin/login" />} />
+      </Routes>
+    );
+  }
 
   return (
-    <div>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/signup"
-          element={
-              <Signup/>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-              <Login onRequestClose={closeLoginModal} />
-          }
-        />
-        <Route
-          path="/verify-otp"
-          element={
-              <OTPModal isOpen={otpModalOpen} onRequestClose={closeOTPModal}>
-                <VerifyOTP onRequestClose={closeOTPModal}/>
-              </OTPModal>
-          }
-        />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<Navigate to="/admin/dashboard" />} />
+      <Route path="dashboard/*" element={<AdminDashboard />} />
+      <Route path="hotels" element={<HotelListingTable/>}/>
+      <Route path="addHotel" element={<Addlocation/>} />
+    </Routes>
+  );
+};
+
+
+
+const AppRouter: React.FC = () => {
+  return (
+    <Routes>
+         <Route path="/" element={<Home />} />
+      <Route path="/user/*" element={<UserRouter />} />
+      <Route path="/admin/*" element={<AdminRouter />} />
+    </Routes>
   );
 };
 

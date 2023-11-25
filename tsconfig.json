@@ -17,8 +17,8 @@
     "paths": {
       "*": ["src/*"]
     },
-    "types": ["react", "react-dom", "node"] 
-  },
+    "types": ["react", "react-dom", "react-redux", "node"]
+  },  
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "build", "dist"]
 }

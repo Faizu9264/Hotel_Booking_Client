@@ -6,43 +6,28 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../../redux/actions/authActions';
+import { setLoginStatus } from '../../redux/actions/authActions';
 import { RootState } from '../../redux/store';
 import GoogleOneTapButton from './GoogleOneTapButton';
 
-interface LoginProps {
-  onRequestClose: (modalIdentifier: string) => void;
-}
+// interface LoginProps {
+//   onRequestClose: (modalIdentifier: string) => void;
+// }
 
-const Login: React.FC<LoginProps> = ({ onRequestClose }) => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [signupModalOpen, setSignupModalOpen] = useState(false);
-
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userData = useSelector((state: RootState) => state.auth.user);
   const userEmail = userData?.email;
-  const handleLoginClick = () => {
-    setLoginModalOpen(true);
-  };
-
-  const closeLoginModal = () => {
-    setLoginModalOpen(false);
-  };
-  const handleSignupClick = () => {
-    setSignupModalOpen(true);
-  };
-
-  const closeSignupModal = () => {
-    setSignupModalOpen(false);
-  };
+  
   const handleLogin = async () => {
     try {
       setEmailError(null);
@@ -68,8 +53,8 @@ const Login: React.FC<LoginProps> = ({ onRequestClose }) => {
       dispatch(setUserData({ email, ...user }));
       if (user.message === 'Login successful') {
         toast.success('Login successful');
-        // onRequestClose('otp');
         navigate('/');
+        dispatch(setLoginStatus(true));
       } else {
         toast.error('Invalid credentials. Please try again.');
       }
@@ -185,7 +170,7 @@ const Login: React.FC<LoginProps> = ({ onRequestClose }) => {
       <GoogleOneTapButton/>
       <p className="text-center mt-3">
         Don't have an account?{' '}
-        <span  onClick={() => navigate('/signup')}className="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500">Sign up</span>
+        <span  onClick={() => navigate('/user/signup')}className="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500">Sign up</span>
       </p>
     </div>
   </main>
