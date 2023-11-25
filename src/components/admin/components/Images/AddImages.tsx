@@ -1,25 +1,18 @@
 import { Paper } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import ImagesList, { ImagesListProps } from './imagesList';
+import ImagesList from './imagesList';
 import ProgressList from './progressList/ProgressList';
 
-const AddImages = () => {
+const AddImages: React.FC = () => {
   const [files, setFiles] = useState<File[]>([]);
-
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
   }, []);
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { 'image/*': [] },
   });
-
-  const imagesListProps: ImagesListProps = {
-    images: files.map((file) => URL.createObjectURL(file)),
-  };
-
   return (
     <>
       <Paper
@@ -30,7 +23,6 @@ const AddImages = () => {
           border: '1px dashed #ccc',
           '&:hover': { border: '1px solid #ccc' },
         }}
-        elevation={3}
       >
         <div style={{ padding: '16px' }} {...getRootProps()}>
           <input {...getInputProps()} />
@@ -42,8 +34,8 @@ const AddImages = () => {
           <em>(images with *.jpeg, *.png, *.jpg extension will be accepted)</em>
         </div>
       </Paper>
-      <ProgressList files={files} />
-      <ImagesList {...imagesListProps} />
+      <ProgressList {...{ files }} />
+      <ImagesList />
     </>
   );
 };

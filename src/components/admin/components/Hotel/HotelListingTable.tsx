@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { getHotels } from '../../../../redux/actions/hotelActions';
-import { selectHotels } from '../../../../redux/reducers/hotelReducer';
+import  selectHotels  from '../../../../redux/reducers/hotelReducer';
 import {
   Avatar,
   Button,
@@ -37,7 +37,7 @@ const dummyHotels = [
     createdAt: '2023-01-01T12:00:00Z',
   },
   {
-    _id: '1',
+    _id: '2',
     uName: 'John Doe',
     title: 'Hotel ABC',
     description: 'A wonderful hotel',
@@ -48,7 +48,7 @@ const dummyHotels = [
     createdAt: '2023-01-01T12:00:00Z',
   },
   {
-    _id: '1',
+    _id: '3', 
     uName: 'John Doe',
     title: 'Hotel ABC',
     description: 'A wonderful hotel',
@@ -58,9 +58,8 @@ const dummyHotels = [
     uPhoto: 'https://placekitten.com/50/50',
     createdAt: '2023-01-01T12:00:00Z',
   },
-  
- 
 ];
+
 
 export const HotelListingTable: React.FC = () => {
   const dispatch = useDispatch();
@@ -169,34 +168,21 @@ export const HotelListingTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {hotels.map(
-              (
-                {
-                  uName,
-                  title,
-                  description,
-                  lng,
-                  lat,
-                  uPhoto,
-                  createdAt,
-                },
-                index,
-              ) => {
-                const isLast = index === hotels.length - 1;
-                const classes = isLast
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
+          {hotels.map(
+  ({ _id, uName, title, description, lng, lat, uPhoto, createdAt }, index) => {
+    const isLast = index === hotels.length - 1;
+    const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={title}>
-                    <td className={classes}>
-                      <Avatar
-                        src={uPhoto}
-                        alt={title}
-                        size="md"
-                        className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                      />
-                    </td>
+    return (
+      <tr key={_id}>
+        <td className={classes}>
+          <Avatar
+            src={uPhoto}
+            alt={title}
+            size="md"
+            className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
+          />
+        </td>
                     <td className={classes}>
                       <Typography
                         variant="small"

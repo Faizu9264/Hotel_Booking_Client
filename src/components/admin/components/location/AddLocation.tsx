@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
-import { updateLocation } from '../../../../redux/actions/hotelActions';
+import { updateLocation } from '../../../../redux/slices/hotelSlice';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 

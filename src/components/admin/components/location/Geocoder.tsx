@@ -3,7 +3,8 @@ import MapBoxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import { useControl } from 'react-map-gl';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import { useDispatch } from 'react-redux';
-import { updateLocation } from '../../../../redux/actions/hotelActions';
+import { updateLocation } from '../../../../redux/slices/hotelSlice';
+
 
 const Geocoder = () => {
   const dispatch = useDispatch();

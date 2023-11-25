@@ -14,7 +14,6 @@ interface HotelState {
     description: string;
     images: string[];
   };
-  images: string[];
 }
 
 const initialState: HotelState = {
@@ -23,7 +22,6 @@ const initialState: HotelState = {
   error: null,
   location: { lng: 0, lat: 0 },
   details: { title: '', description: '', images: [] },
-  images: [],  
 };
 
 const hotelSlice = createSlice({
@@ -33,9 +31,11 @@ const hotelSlice = createSlice({
     updateLocation: (state, action: PayloadAction<{ lng: number; lat: number }>) => {
       state.location = action.payload;
     },
-    addImage: (state, action: PayloadAction<string[]>) => {
-      state.details.images.push(...action.payload);
-    },    
+    addImage: (state, action: PayloadAction<string | string[]>) => {
+      // Convert single URL to an array for consistency
+      const urls = Array.isArray(action.payload) ? action.payload : [action.payload];
+      state.details.images.push(...urls);
+    },
     deleteImage: (state, action: PayloadAction<string>) => {
       state.details.images = state.details.images.filter((image) => image !== action.payload);
     },
@@ -56,6 +56,8 @@ const hotelSlice = createSlice({
   },
 });
 
-export const selectImages = (state: RootState) => state.hotel.details.images;
+export const { updateLocation, addImage, deleteImage } = hotelSlice.actions;
+
+export const selectHotelDetails = (state: RootState) => state.hotel.details;
 
 export default hotelSlice.reducer;

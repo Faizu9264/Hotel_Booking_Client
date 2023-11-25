@@ -14,3 +14,7 @@ export interface Hotel {
   lng:string;
   createdAt:Date;
 }
+export interface ImageFile extends File {
+  url: string;
+  key: string;
+}
