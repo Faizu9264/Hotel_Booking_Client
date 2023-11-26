@@ -133,13 +133,11 @@ const VerifyOTP: React.FC<VerifyOTPProps> = ({ onRequestClose }) => {
     let countdownTimer: NodeJS.Timeout;
   
     if (countdown > 0) {
-      // Start the countdown timer when the component mounts
       countdownTimer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
     }
   
-    // Clear the countdown timer when the component unmounts or countdown reaches 0
     return () => {
       clearInterval(countdownTimer);
     };

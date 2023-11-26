@@ -4,8 +4,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { getHotels } from '../../../../redux/actions/hotelActions';
-import  selectHotels  from '../../../../redux/reducers/hotelReducer';
+
 import {
   Avatar,
   Button,

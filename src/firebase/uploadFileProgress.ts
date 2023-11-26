@@ -6,7 +6,7 @@ const uploadFileProgress = (file: File, subFolder: string, imageName: string, se
     const storageRef = ref(storage, subFolder + '/' + imageName);
     const upload = uploadBytesResumable(storageRef, file);
     upload.on(
-      'state_changed', // Corrected event name
+      'state_changed', 
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;

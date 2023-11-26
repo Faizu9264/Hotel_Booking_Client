@@ -1,14 +1,12 @@
 import { Box, Button, Container, Stack, Step, StepButton, Stepper } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../../redux/store';
-import { updateLocation } from '../../../../redux/slices/hotelSlice';
 import AddImages from '../../../../components/admin/components/Images/AddImages'; 
 import AddLocation from '../location/AddLocation';
-
+import { useValue } from '../../../../context/ContextProvider';
 const AddHotel = () => {
-  const dispatch = useDispatch();
-  const { location, details, images } = useSelector((state: RootState) => state.hotel);
+  const {
+    state: { images, details, location },
+  } = useValue();
   const [activeStep, setActiveStep] = useState(0);
   const [steps, setSteps] = useState([
     { label: 'Location', completed: false },
