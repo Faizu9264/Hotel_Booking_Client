@@ -97,14 +97,15 @@ const Geocoder = () => {
           zIndex: 1000,
           visibility: 'visible',
           position: 'absolute',
-          top: 0,
-          left: 0,
+          top: 10,
+          left: '79%',
+          width:'20%',
+         
         }}
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         onKeyPress={handleKeyPress}
       />
-
       <button onClick={handleSearch}>Search</button>
 
       {address && <p>Selected Address: {address}</p>}

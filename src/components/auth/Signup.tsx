@@ -192,7 +192,7 @@ const Signup: React.FC = () => {
               {passwordError && <p className="text-red-500">{passwordError}</p>}
               <div
                 className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-                onClick={togglePasswordVisibility}
+                onClick={togglePasswordVisibility} 
               >
                 {showPassword ? (
                   <svg
@@ -211,7 +211,7 @@ const Signup: React.FC = () => {
                   </svg>
                 ) : (
                   <svg
-                    className="h-6 w-6 text-gray-500"
+                    className="h-6 w-6 text-gray-500 "
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"

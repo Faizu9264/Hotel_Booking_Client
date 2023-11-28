@@ -106,7 +106,7 @@ const Login: React.FC = () => {
           <div
             className="absolute inset-y-0 right-0 pr-1 flex items-center cursor-pointer"
             onClick={togglePasswordVisibility}
-            style={{ marginTop: '5px' }}
+            style={{ marginTop: '30px' }}
           >
             {showPassword ? (
               <svg

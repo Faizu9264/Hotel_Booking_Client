@@ -10,10 +10,10 @@ const ImagesList: React.FC = () => {
 
   const handleDelete = async (image: string) => {
     dispatch({ type: 'DELETE_IMAGE', payload: image });
-    const imageName = image?.split('your_specific_folder/')[1]?.split('?')[0];
+    const imageName = image?.split('hotel/')[1]?.split('?')[0];
     try {
-      // Use the appropriate folder for deletion
-      await deleteFile(`your_specific_folder/${imageName}`);
+
+      await deleteFile(`hotel/${imageName}`);
     } catch (error) {
       console.log(error);
     }
@@ -30,7 +30,7 @@ const ImagesList: React.FC = () => {
     >
       {images.map((image, index) => (
         <ImageListItem key={index} cols={1} rows={1}>
-          <img src={image} alt="rooms" loading="lazy" style={{ height: '100%' }} />
+          <img src={image} alt="hotels" loading="lazy" style={{ height: '100%' }} />
           <ImageListItemBar
             position="top"
             sx={{

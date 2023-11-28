@@ -13,9 +13,21 @@ const Home: React.FC = () => {
   console.log('User Data:', user)
 
   return (
-    <div>
+    <div >
       <Navbar user={user} />
-      Home
+      <div style={{ display:'flex' }}>
+
+      <img
+        src="/logo/hotel.jpeg"  
+        alt=""
+        style={{ width:'50%' }} 
+      />
+      <img
+        src="/logo/hotel.jpeg"  
+        alt=""
+        style={{ width:'50%' }} 
+      />
+      </div>
     </div>
   );
 };
