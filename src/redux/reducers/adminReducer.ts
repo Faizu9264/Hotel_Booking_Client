@@ -2,14 +2,17 @@
 
 import { SET_ADMIN_DATA, CLEAR_ADMIN_DATA, SET_ADMIN_LOGIN_STATUS } from '../actions/adminActions';
 
+
 interface AdminState {
   admin: any | null;
   isAdminLoggedIn: boolean;
+
 }
 
 const initialState: AdminState = {
   admin: null,
   isAdminLoggedIn: false,
+
 };
 
 const adminReducer = (state = initialState, action: any) => {
@@ -31,6 +34,7 @@ const adminReducer = (state = initialState, action: any) => {
         ...state,
         isAdminLoggedIn: action.payload,
       };
+
     default:
       return state;
   }

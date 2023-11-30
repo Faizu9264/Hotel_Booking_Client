@@ -4,14 +4,17 @@ import { combineReducers } from 'redux';
 import authReducer from './reducers/authReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import adminReducer from './reducers/adminReducer';
-
+import thunk from 'redux-thunk';
+import hotelSlice from './slices/hotelSlice';
 const rootReducer = combineReducers({
   auth: authReducer,
-  admin:adminReducer
+  admin:adminReducer,
+  hotel:hotelSlice
 });
 
 const store = configureStore({
   reducer: rootReducer,
+  middleware: [thunk],
 });
 
 export type RootState = ReturnType<typeof store.getState>;

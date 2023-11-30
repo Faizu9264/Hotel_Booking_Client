@@ -1,19 +1,21 @@
-
 // hotelActionTypes.ts
 export const UPDATE_HOTEL = 'UPDATE_HOTEL';
 
 export interface Hotel {
   _id: string;
-  price: number; 
-  uName: string;
-  uPhoto: string;
+  HotelName: string;
+  minRent: number;
+  location: string;
+  email: string;
+  amenities: string[];
   images: string[];
-  title: string;
-  description:string;
-  lat:string;
-  lng:string;
-  createdAt:Date;
+  description: string;
+  phone: Number;
+  lat: string;
+  lng: string;
+  createdAt: Date;
 }
+
 export interface ImageFile extends File {
   url: string;
   key: string;

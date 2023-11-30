@@ -7,6 +7,9 @@ import AddImages from '../../../../components/admin/components/Images/AddImages'
 import AddLocation from '../location/AddLocation';
 import { useValue } from '../../../../context/ContextProvider';
 import AddDetails from '../Details/AddDetails';
+import adminApi from '../../../../services/adminApi';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const AddHotel = () => {
   const {
@@ -20,7 +23,7 @@ const AddHotel = () => {
     { label: 'Images', completed: false },
   ]);
   const [showSubmit, setShowSubmit] = useState(false);
-
+  const navigate = useNavigate()
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
       setActiveStep((prevStep) => prevStep + 1);
@@ -57,7 +60,7 @@ const AddHotel = () => {
   }, [images]);
 
   useEffect(() => {
-    if (details.title.length > 4 && details.description.length > 9) {
+    if (details.hotelName.length > 4 && details.description.length > 9) {
       if (!steps[1].completed) setComplete(1, true);
     } else {
       if (steps[1].completed) setComplete(1, false);
@@ -80,19 +83,39 @@ const AddHotel = () => {
     }
   }, [steps, showSubmit]);
 
-  const handleSubmit = () => {
-    const hotel = {
-      lng: location.lng,
-      lat: location.lat,
-      price: details.price,
-      description: details.description,
+  const handleSubmit = async () => {
+    const hotelDetails = {
+      location: {
+        lat: location.lat,
+        lng: location.lng,
+      },
+      details: {
+        hotelName: details.hotelName,
+        minRent: details.minRent,
+        location:details.location,
+        contactNo: details.contactNo,
+        emailAddress: details.emailAddress,
+        description: details.description,
+      },
       images,
-    };
-    console.log(hotel, 'hotel');
+    }
+    try {
+      const response = await adminApi.createHotel(hotelDetails);
+      toast.success('Hotel created successfully');
+      setTimeout(() => {
+        navigate('/admin/dashboard/hotels');
+      }, 3000);
+    } catch (error) {
+      toast.error('Error creating hotel');
+    }
+  
+    
+    console.log(hotelDetails, 'hotel');
   };
 
   return (
     <Container sx={{ my: 4 }}>
+      <ToastContainer />
       <Stepper alternativeLabel nonLinear activeStep={activeStep} sx={{ mb: 3 }}>
         {steps.map((step, index) => (
           <Step key={step.label} completed={step.completed}>

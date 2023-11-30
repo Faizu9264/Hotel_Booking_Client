@@ -6,7 +6,7 @@ import { setUserData } from '../../redux/actions/authActions';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import api from '../../services/api';
+import api from '../../services/userApi';
 // import 'google-accounts';
 
 declare global {

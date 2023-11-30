@@ -107,7 +107,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import api from '../../services/api';
+import api from '../../services/userApi';
 import OTPModal from '../common/OTPModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -17,8 +17,12 @@ import HotelListingTable from './Hotel/HotelListingTable';
 // import AddLocation from './location/AddLocation';
 import AddHotel from './Hotel/AddHotel'
 import { useLocation } from 'react-router-dom';
+import { Dispatch } from 'redux';
+import { useDispatch } from 'react-redux';
+import adminApi from '../../../services/adminApi';
 
-const Sidebar: React.FC = () => {
+
+ const Sidebar: React.FC = () => {
   const [open, setOpen] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
   const location = useLocation();
@@ -38,6 +42,8 @@ const Sidebar: React.FC = () => {
     setSelectedMenu(title);
   };
 
+  const dispatch: Dispatch<any> = useDispatch();
+  
   return (
     <div className="flex">
       <div

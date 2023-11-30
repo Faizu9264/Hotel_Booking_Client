@@ -1,5 +1,5 @@
 import { Dispatch, AnyAction } from 'redux';
-import api from '../../services/api';
+import api from '../../services/userApi';
 import { UserData } from '../../types/authTypes';
 
 export const SET_USER_DATA = 'SET_USER_DATA';
