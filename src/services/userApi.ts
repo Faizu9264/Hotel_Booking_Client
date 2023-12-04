@@ -136,13 +136,16 @@
 
 // userApi.ts
 import createAxiosInstance from './axiosConfig';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const API_BASE_URL = 'http://localhost:5000/user';
 import { setRefreshToken, removeRefreshToken } from './tokenHandler';
-
+import { setHotels } from '../redux/slices/hotelSlice'
 const axiosInstance = createAxiosInstance(API_BASE_URL);
 
 let userData: any = {};
+
+ 
 
 const api = {
   sendOTP: async (email: string) => {
@@ -209,6 +212,43 @@ const api = {
       throw error;
     }
   },
+  getAllHotels:async()=>{
+    try {
+      console.log('Attempting to fetch hotels...');
+      const response = await axiosInstance.get(`/hotel/all`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+      console.log('All Hotels Response:', response);
+      const hotels = response.data;
+      // dispatch(setHotels(hotels));
+      return hotels;
+    } catch (error: any) {
+      console.error('Error fetching hotels:', error.message);
+      throw new Error(error.message);
+    }
+  }
+  // getAllHotels: createAsyncThunk('/', async (_, { dispatch }) => {
+  //   try {
+  //     console.log('Attempting to fetch hotels...');
+  //     const response = await axiosInstance.get(`/hotel/all`, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       withCredentials: true,
+  //     });
+  //     console.log('All Hotels Response:', response);
+  //     const hotels = response.data;
+  //     dispatch(setHotels(hotels));
+  //     return hotels;
+  //   } catch (error: any) {
+  //     console.error('Error fetching hotels:', error.message);
+  //     throw new Error(error.message);
+  //   }
+  // }),
+  
 };
 
 export default api;

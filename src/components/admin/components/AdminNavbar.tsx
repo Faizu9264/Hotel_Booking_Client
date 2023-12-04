@@ -12,7 +12,9 @@ const Navbar: React.FC = () => {
 const navigate = useNavigate()
   const handleLogout = () => {
     dispatch(clearAdminData());
-    dispatch(setAdminLoginStatus(false));
+  dispatch(setAdminLoginStatus(false));
+  localStorage.removeItem('adminData');
+  localStorage.removeItem('adminLoginStatus');
     navigate('/admin/login');
   };
   return (

@@ -67,7 +67,7 @@ const Geocoder = () => {
           payload: { lng: latLng.lng, lat: latLng.lat },
         });
 
-        map.setView([latLng.lat, latLng.lng], 8);
+        map.setView([latLng.lat, latLng.lng], 13);
 
         console.log('Selected Address:', address);
       } else {

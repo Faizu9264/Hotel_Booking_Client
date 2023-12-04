@@ -21,7 +21,7 @@
     },
     
     "typeRoots": ["./", "node_modules/@types"],
-    "types": ["react", "react-dom", "react-redux", "node"]
+    "types": ["react", "react-dom", "react-redux"]
   },  
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "build", "dist"]

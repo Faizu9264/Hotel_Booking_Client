@@ -50,7 +50,7 @@ const handleResponse = async (response: any) => {
       dispatch(setUserData({id, email, username, profileImage, token, isGoogle: true }));
       console.log('User Details:', { email, username, profileImage });
   
-
+      localStorage.setItem('userData', JSON.stringify({ id, email, username, profileImage, token, isGoogle: true }));
       const apiResponse = await api.googleLogin(email, username,token, true);
   
       if (apiResponse.message === 'Login successful') {

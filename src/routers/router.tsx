@@ -1,5 +1,5 @@
 // src/routers/router.tsx
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Home from "../pages/Home";
 import Signup from "../components/auth/Signup";
@@ -11,13 +11,22 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import Addlocation from '../components/admin/components/location/AddLocation'
 import HotelListingTable from "../components/admin/components/Hotel/HotelListingTable";
+import { useDispatch } from "react-redux";
+import { setAdminData, setAdminLoginStatus } from '../redux/actions/adminActions';
 
-
-
+import { setLoginStatus } from '../redux/actions/authActions';
 
 const UserRouter: React.FC = () => {
   const [otpModalOpen, setOTModalOpen] = useState(false);
+  const dispatch = useDispatch();
+  const isUserLoggedInFromLocalStorage = localStorage.getItem('userData') !== null;
 
+  useEffect(() => {
+    dispatch(setLoginStatus(isUserLoggedInFromLocalStorage));
+  }, [dispatch, isUserLoggedInFromLocalStorage]);
+
+  const isUserLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  
   const openOTPModal = () => {
     setOTModalOpen(true);
   };
@@ -31,14 +40,22 @@ const UserRouter: React.FC = () => {
       <Route path="signup" element={<Signup />} />
       <Route path="login" element={<Login />} />
       <Route path="verify-otp" element={<OTPModal isOpen={otpModalOpen} onRequestClose={closeOTPModal} />} />
+      <Route path="view-hotels" element={<Home/>}/>
+      <Route path="find-hotels" element={<Home/>}/>
+
     </Routes>
   );
 };
 
 const AdminRouter: React.FC = () => {
-  const isAdminLoggedIn = useSelector((state: RootState) => state.admin.isAdminLoggedIn);
-  console.log(isAdminLoggedIn);
+  // const isAdminLoggedIn = useSelector((state: RootState) => state.admin.isAdminLoggedIn);
+  // console.log(isAdminLoggedIn);
+  const dispatch = useDispatch();
+  const isAdminLoggedInFromLocalStorage = localStorage.getItem('adminData') !== null;
 
+  dispatch(setAdminLoginStatus(isAdminLoggedInFromLocalStorage));
+
+  const isAdminLoggedIn = useSelector((state: RootState) => state.admin.isAdminLoggedIn);
   if (!isAdminLoggedIn) {
     return (
       <Routes>

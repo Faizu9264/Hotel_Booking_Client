@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,6 +9,7 @@ import { setUserData } from '../../redux/actions/authActions';
 import { setLoginStatus } from '../../redux/actions/authActions';
 import { RootState } from '../../redux/store';
 import GoogleOneTapButton from './GoogleOneTapButton';
+import { setHotels } from '../../redux/slices/hotelSlice';
 
 // interface LoginProps {
 //   onRequestClose: (modalIdentifier: string) => void;
@@ -27,6 +28,7 @@ const Login: React.FC = () => {
 
   const userData = useSelector((state: RootState) => state.auth.user);
   const userEmail = userData?.email;
+
   
   const handleLogin = async () => {
     try {
@@ -49,14 +51,24 @@ const Login: React.FC = () => {
         return;
       }
       
-      const user = await api.login(email, password);
-      dispatch(setUserData({ email, ...user }));
-      if (user.message === 'Login successful') {
-        toast.success('Login successful');
-        navigate('/');
-        dispatch(setLoginStatus(true));
-      } else {
-        toast.error('Invalid credentials. Please try again.');
+      try {
+        const user = await api.login(email, password);
+  
+        localStorage.setItem('userData', JSON.stringify({ email, ...user }));
+  
+        dispatch(setUserData({ email, ...user }));
+        
+        if (user.message === 'Login successful') {
+          toast.success('Login successful');
+          
+          navigate('/'); 
+        
+          dispatch(setLoginStatus(true));
+        } else {
+          toast.error('Invalid credentials. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error during login:', error);
       }
     } catch (error: any) {
       console.error('Login failed', error.message);

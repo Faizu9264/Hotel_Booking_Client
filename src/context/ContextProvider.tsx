@@ -70,7 +70,7 @@
 
 
 
-import { createContext, useContext, useEffect, useReducer } from 'react';
+import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import reducer from './reducer';
 
 interface ContextProviderProps {
@@ -131,7 +131,6 @@ export const useValue = () => {
 
 const ContextProvider: React.FC<ContextProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-
   useEffect(() => {
     const initialHotelDetails = {
       id: 'hotel-1',

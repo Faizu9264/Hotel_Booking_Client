@@ -8,6 +8,7 @@ import Geocoder from './Geocoder';
 import ChangeView from './ChangeView';
 import { ErrorBoundary } from 'react-error-boundary';
 
+
 const AddLocation = () => {
   const {
     state: {

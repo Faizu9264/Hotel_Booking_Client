@@ -2,8 +2,9 @@
 
 interface ImportMeta {
     env: {
-      VITE_GOOGLE_ONETAP: string;
-      REACT_APP_MAP_TOKEN: string;
+      VITE_GOOGLE_ONETAP: string,
+      VITE_MAPBOX_TOKEN: string,
+      DROP_IMAGE:string,
     };
   }
 

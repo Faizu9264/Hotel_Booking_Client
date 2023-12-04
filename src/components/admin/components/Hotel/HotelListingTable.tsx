@@ -282,7 +282,7 @@ import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../../../redux/store'; 
 import adminApi from '../../../../services/adminApi';
 import { Dispatch } from 'redux';
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+// import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
 export const HotelListingTable: React.FC = () => {
   const dispatch: Dispatch<any> = useDispatch();

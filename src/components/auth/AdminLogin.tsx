@@ -39,6 +39,7 @@ const AdminLogin = () => {
       if(admin){
         dispatch(setAdminLoginStatus(true));
       }
+      localStorage.setItem('adminData', JSON.stringify({ email, ...admin }));
       if (admin.message === 'Admin login successful') {
         toast.success('Admin login successful');
         navigate('/admin/dashboard');

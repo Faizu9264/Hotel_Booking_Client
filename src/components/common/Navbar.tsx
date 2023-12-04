@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { UserData } from "../../types/authTypes";
 import { Link } from "react-router-dom";
@@ -8,15 +8,33 @@ import { useNavigate } from 'react-router-dom';
 import { logoutUser } from "../../redux/actions/authActions";
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoginStatus } from '../../redux/actions/authActions';
+import { setUserData } from "../../redux/actions/authActions";
 const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchData = async () => {
+      const isUserLoggedInFromLocalStorage = localStorage.getItem('userData') !== null;
+      dispatch(setLoginStatus(isUserLoggedInFromLocalStorage));
+
+      if (isUserLoggedInFromLocalStorage) {
+        const userData = JSON.parse(localStorage.getItem('userData') || '');
+        dispatch(setUserData(userData));
+      }
+    };
+
+    fetchData();
+  },[]);
+
+  const userData = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    console.log("jiji")
+    localStorage.removeItem('userData')
     dispatch(logoutUser());
     dispatch(setLoginStatus(false));
     navigate('/');
@@ -59,9 +77,9 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
           </NavLink>
         </div>
 
-        {user&&isLoggedIn ? (
+        {userData&&isLoggedIn ? (
           <>
-            <AvatarMenu user={user} />
+            <AvatarMenu user={userData} />
           </>
         ) : (
           <div className="flex space-x-4 items-center">
@@ -77,10 +95,10 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
 
 
         <div className="md:hidden flex items-center">
-          {user&&isLoggedIn ? (
+          {userData &&isLoggedIn ? (
             <>
               <img
-                src={user.profileImage || "/logo/profile.png"}
+                src={userData.profileImage || "/logo/profile.png"}
                 alt="User Profile"
                 className="w-8 h-8 rounded-full border-2 border-white"
               />
@@ -137,7 +155,7 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
             <NavLink to="/user/contact" className="block text-white hover:text-gray-300 transition duration-300 py-2">
               Contact
             </NavLink>
-            {user&&isLoggedIn && (
+            {userData &&isLoggedIn && (
               <>
                 <NavLink to="/user/profile" className="block text-white hover:text-gray-300 transition duration-300 py-2">
                   Profile

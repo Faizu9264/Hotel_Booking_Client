@@ -6,10 +6,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import adminReducer from './reducers/adminReducer';
 import thunk from 'redux-thunk';
 import hotelSlice from './slices/hotelSlice';
+import mapReducer from './slices/mapSlice';
+
 const rootReducer = combineReducers({
   auth: authReducer,
   admin:adminReducer,
-  hotel:hotelSlice
+  hotel:hotelSlice,
+  map: mapReducer,
 });
 
 const store = configureStore({

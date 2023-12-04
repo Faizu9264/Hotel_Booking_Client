@@ -11,8 +11,9 @@ export interface Hotel {
   images: string[];
   description: string;
   phone: Number;
-  lat: string;
-  lng: string;
+  lat: number;
+  lng: number;
+  dropImage:string;
   createdAt: Date;
 }
 
