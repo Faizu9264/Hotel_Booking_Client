@@ -230,25 +230,7 @@ const api = {
       throw new Error(error.message);
     }
   }
-  // getAllHotels: createAsyncThunk('/', async (_, { dispatch }) => {
-  //   try {
-  //     console.log('Attempting to fetch hotels...');
-  //     const response = await axiosInstance.get(`/hotel/all`, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       withCredentials: true,
-  //     });
-  //     console.log('All Hotels Response:', response);
-  //     const hotels = response.data;
-  //     dispatch(setHotels(hotels));
-  //     return hotels;
-  //   } catch (error: any) {
-  //     console.error('Error fetching hotels:', error.message);
-  //     throw new Error(error.message);
-  //   }
-  // }),
-  
+
 };
 
 export default api;

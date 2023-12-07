@@ -281,6 +281,7 @@ import { PencilIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../../../redux/store'; 
 import adminApi from '../../../../services/adminApi';
+
 import { Dispatch } from 'redux';
 // import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
@@ -288,6 +289,8 @@ export const HotelListingTable: React.FC = () => {
   const dispatch: Dispatch<any> = useDispatch();
   const hotels = useSelector((state: RootState) => state.hotel.hotels);
   const [selectedPage, setSelectedPage] = useState(1);
+  const [selectedHotelDetails, setSelectedHotelDetails] = useState(null); 
+  
   const pageSize = 3;
   const navigate = useNavigate();
 
@@ -295,7 +298,8 @@ export const HotelListingTable: React.FC = () => {
     const fetchData = async () => {
       try {
         const response = await dispatch(adminApi.getAllHotels()); 
-        console.log('All Hotels:', response);
+        console.log('All Hotels,,:', response);
+        
       } catch (error) {
         console.error('Error fetching hotel data:', error);
       }
@@ -314,7 +318,12 @@ export const HotelListingTable: React.FC = () => {
   const handlePageClick = (pageNumber: number) => {
     setSelectedPage(pageNumber);
   };
+  const handleEditHotelClick = (hotelId: string) => {
+    const selectedHotel = hotels.find((hotel) => hotel._id === hotelId);
+    setSelectedHotelDetails(selectedHotel);
 
+    navigate(`/admin/dashboard/editHotel?hotelId=${hotelId}`);
+  };
   return (
     <Card className="h-full w-full overflow-hidden">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -459,12 +468,12 @@ export const HotelListingTable: React.FC = () => {
                   </td>
                   
                   <td className={classes}>
-                    <Tooltip content="Edit Hotel">
-                      <IconButton variant="text">
-                        <PencilIcon className="h-4 w-4" />
-                      </IconButton>
-                    </Tooltip>
-                  </td>
+              <Tooltip content="Edit Hotel">
+                <IconButton variant="text" onClick={() => handleEditHotelClick(_id)}>
+                  <PencilIcon className="h-4 w-4" />
+                </IconButton>
+              </Tooltip>
+            </td>
                 </tr>
               );
             })}

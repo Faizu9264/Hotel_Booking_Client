@@ -71,6 +71,9 @@ const AdminRouter: React.FC = () => {
       <Route path="dashboard/*" element={<AdminDashboard />} />
       <Route path="hotels" element={<HotelListingTable/>}/>
       <Route path="addHotel" element={<Addlocation/>} />
+      {/* <Route path="editHotel" element={<Navigate to="/admin/dashboard" />} /> */}
+      <Route path="editHotel/:hotelId" element={<Addlocation />} />
+      <Route path="*" element={<Navigate to="/admin/dashboard" />} />
     </Routes>
   );
 };

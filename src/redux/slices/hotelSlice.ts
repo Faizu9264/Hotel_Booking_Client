@@ -1,30 +1,7 @@
-// // hotelSlice.ts
-// import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-// interface HotelState {
-//   hotels: any[]; 
-// }
-
-// const initialState: HotelState = {
-//   hotels: [],
-// };
-
-// const hotelSlice = createSlice({
-//   name: 'hotel',
-//   initialState,
-//   reducers: {
-//     setHotels: (state, action: PayloadAction<any[]>) => {
-//       state.hotels = action.payload;
-//     },
-//   },
-// });
-
-// export const { setHotels } = hotelSlice.actions;
-// export default hotelSlice.reducer;
 
 
 
-// hotelSlice.ts
+// path-to-your/hotelSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface HotelState {
@@ -32,12 +9,24 @@ interface HotelState {
   addressFilter?: { longitude?: number; latitude?: number; hotelName?: string };
   priceFilter?: number;
   filteredHotels: any[];
+  hotelDetails: {
+    id: string;
+    hotelName: string;
+    location: string;
+    contactNo: string;
+    emailAddress: string;
+    minRent: number;
+    amenities: string[];
+    description: string;
+    images: string[];
+  } | null;
 }
 
 const initialState: HotelState = {
   hotels: [],
   filteredHotels: [],
   priceFilter: 3500,
+  hotelDetails: null, 
 };
 
 const hotelSlice = createSlice({
@@ -46,7 +35,7 @@ const hotelSlice = createSlice({
   reducers: {
     setHotels: (state, action: PayloadAction<any[]>) => {
       state.hotels = action.payload;
-      state.filteredHotels = applyFilter(state.hotels, state.addressFilter, state.priceFilter || 0);
+      state.filteredHotels = [...applyFilter(state.hotels, state.addressFilter, state.priceFilter || 0)];
     },
     setAddressFilter: (state, action: PayloadAction<{ longitude?: number; latitude?: number; hotelName?: string } | undefined>) => {
       state.addressFilter = action.payload;
@@ -59,6 +48,9 @@ const hotelSlice = createSlice({
     clearAddress: (state) => {
       state.addressFilter = undefined;
       state.filteredHotels = applyFilter(state.hotels, state.addressFilter, state.priceFilter || 0);
+    },
+    setHotelDetails: (state, action: PayloadAction<any>) => {
+      state.hotelDetails = action.payload;
     },
   },
 });
@@ -75,12 +67,14 @@ const applyFilter = (hotels: any[], address: { longitude?: number; latitude?: nu
     });
   }
 
-  if (price < 3500) {
-    filteredHotels = filteredHotels.filter(hotel => hotel.minimumRent <= price);
+  const dynamicMinRent = price;
+
+  if (filteredHotels.length > 0 && filteredHotels[0].details && filteredHotels[0].details.minRent !== undefined) {
+    filteredHotels = filteredHotels.filter(hotel => hotel.details.minRent <= dynamicMinRent);
   }
 
   return filteredHotels;
 };
 
-export const { setHotels, setAddressFilter, setPriceFilter, clearAddress } = hotelSlice.actions;
+export const { setHotels, setAddressFilter, setPriceFilter, clearAddress, setHotelDetails } = hotelSlice.actions;
 export default hotelSlice.reducer;

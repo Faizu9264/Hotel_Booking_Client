@@ -1,93 +1,9 @@
-// import {
-//     FormControl,
-//     FormControlLabel,
-//     InputAdornment,
-//     Radio,
-//     RadioGroup,
-//     Stack,
-//     TextField,
-//   } from '@mui/material';
-//   import { useState, ChangeEvent } from 'react';
-//   import { useValue } from '../../../../context/ContextProvider';
-//   import InfoField from './InfoField';
-  
-//   const AddDetails = () => {
-//     const {
-//       state: {
-//         details: { title, description, price },
-//       },
-//       dispatch,
-//     } = useValue();
-//     const [costType, setCostType] = useState<number>(price ? 1 : 0);
-  
-//     const handleCostTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
-//       const costType = Number(e.target.value);
-//       setCostType(costType);
-//       if (costType === 0) {
-//         dispatch({ type: 'UPDATE_DETAILS', payload: { price: 0 } });
-//       } else {
-//         dispatch({ type: 'UPDATE_DETAILS', payload: { price: 15 } });
-//       }
-//     };
-  
-//     const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-//       dispatch({ type: 'UPDATE_DETAILS', payload: { price: e.target.value } });
-//     };
-  
-//     return (
-//       <Stack
-//         sx={{
-//           alignItems: 'center',
-//           '& .MuiTextField-root': { width: '100%', maxWidth: 500, m: 1 },
-//         }}
-//       >
-//         <FormControl>
-//           <RadioGroup
-//             name="costType"
-//             value={costType}
-//             row
-//             onChange={handleCostTypeChange}
-//           >
-//             <FormControlLabel value={0} control={<Radio />} label="Free Stay" />
-//             <FormControlLabel value={1} control={<Radio />} label="Nominal Fee" />
-//             {Boolean(costType) && (
-//               <TextField
-//                 sx={{ width: '7ch !important' }}
-//                 variant="standard"
-//                 InputProps={{
-//                   startAdornment: (
-//                     <InputAdornment position="start">$</InputAdornment>
-//                   ),
-//                 }}
-//                 inputProps={{ type: 'number', min: 1, max: 50 }}
-//                 value={price}
-//                 onChange={handlePriceChange}
-//                 name="price"
-//               />
-//             )}
-//           </RadioGroup>
-//         </FormControl>
-//         <InfoField
-//           mainProps={{ name: 'title', label: 'Title', value: title }}
-//           minLength={5}
-//         />
-//         <InfoField
-//           mainProps={{
-//             name: 'description',
-//             label: 'Description',
-//             value: description,
-//           }}
-//           minLength={10}
-//           optionalProps={{ multiline: true, rows: 4 }}
-//         />
-//       </Stack>
-//     );
-//   };
-  
-//   export default AddDetails;
-  
 
-import React, { useState, ChangeEvent } from 'react';
+
+import React, { useState, ChangeEvent,useEffect } from 'react';
+import { RootState } from 'src/redux/store';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux/es/hooks/useSelector';
 import {
   Stack,
   TextField,
@@ -100,6 +16,11 @@ import {
 } from '@mui/material';
 import { useValue } from '../../../../context/ContextProvider';
 import InfoField from './InfoField';
+import { toast ,ToastContainer} from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setHotelDetails } from '../../../../redux/slices/hotelSlice';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const AddDetails = () => {
   const {
@@ -108,9 +29,43 @@ const AddDetails = () => {
     },
     dispatch,
   } = useValue();
+  // const { hotelId } = useParams();
+ const navigate  = useNavigate()
+  const hotels = useSelector((state: RootState) => state.hotel.hotels);
+  const isEditMode = Boolean(new URLSearchParams(window.location.search).get('hotelId'));
+  const hotelId = new URLSearchParams(window.location.search).get('hotelId');
+  
+  useEffect(() => {
+    if (hotels.length > 0 && isEditMode) {
+      const hotelToUpdate = hotels.find((hotel: any) => {
+        return hotel._id === hotelId;
+      });
+  
+      if (hotelToUpdate) {
+        // dispatch(setHotelDetails(hotelToUpdate.details));
+        dispatch({type:'UPDATE_DETAILS',payload:{
+          minRent:hotelToUpdate.details.minRent,
+          hotelName:hotelToUpdate.details.hotelName
+          ,contactNo:hotelToUpdate.details.contactNo,
+          location:hotelToUpdate.details.location,
+          emailAddress:hotelToUpdate.details.emailAddress,
+          description:hotelToUpdate.details.description,
+        }})
+      }
+    }
+  }, [hotelId,isEditMode , hotels,dispatch]);
+
 
   const handleMinRentChange = (e: ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: 'UPDATE_DETAILS', payload: { minRent: e.target.value } });
+    const value = parseFloat(e.target.value);
+    
+    if (value <= 0) {
+      toast.error('minimum rent must be greater than zero')
+    }else  if (value > 3500) {
+      toast.error('minimum rent must be less than or equal to 3500')
+    } else {
+      dispatch({ type: 'UPDATE_DETAILS', payload: { minRent: value } });
+    }
   };
 
   const handleHotelNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -142,6 +97,7 @@ const AddDetails = () => {
         },
       }}
     >
+      <ToastContainer/>
       <FormControl>
         <RadioGroup name="costType" value={1} onChange={() => {}}>
           <Box display="flex" alignItems="flex-start">
@@ -150,9 +106,9 @@ const AddDetails = () => {
             sx={{ width: '10ch !important' }}
               variant="standard"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                startAdornment: <InputAdornment position="start">₹</InputAdornment>,
               }}
-              inputProps={{ type: 'number', min: 1, max: 50 }}
+              inputProps={{ type: 'number', min: 100, max: 3500 }}
               value={minRent}
               onChange={handleMinRentChange}
               name="minRent"
@@ -160,6 +116,7 @@ const AddDetails = () => {
           </Box>
         </RadioGroup>
       </FormControl>
+     
       <Stack direction="row">
         <InfoField
           {...{ name: 'hotelName', label: 'Hotel Name', value: hotelName }}

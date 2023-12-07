@@ -75,7 +75,6 @@ const createAxiosInstance = (baseURL: string): AxiosInstance => {
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken.split('=')[1]}`;
     }
-    console.log('inside axios',config);
     
     return config;
   });

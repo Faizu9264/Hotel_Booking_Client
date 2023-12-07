@@ -20,12 +20,20 @@ import { useLocation } from 'react-router-dom';
 import { Dispatch } from 'redux';
 import { useDispatch } from 'react-redux';
 import adminApi from '../../../services/adminApi';
+import { useValue } from '../../../context/ContextProvider';
 
 
  const Sidebar: React.FC = () => {
   const [open, setOpen] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
-  const location = useLocation();
+  const url = useLocation();
+  const {
+    state: {
+      details: { hotelName, location, contactNo, emailAddress, minRent, description },
+    },
+    dispatch,
+  } = useValue();
+  const isEditMode = Boolean(new URLSearchParams(window.location.search).get('hotelId'));
 
   const Menus = [
     { title: "Dashboard", icon: faHome, route: "/admin/dashboard/" },
@@ -42,7 +50,16 @@ import adminApi from '../../../services/adminApi';
     setSelectedMenu(title);
   };
 
-  const dispatch: Dispatch<any> = useDispatch();
+useEffect(()=>{
+  console.log('hi');
+
+    console.log('hello');
+    
+    if (!isEditMode) {
+      dispatch({ type: 'RESET_HOTEL_STATE' });
+    }
+},[url])
+  // const dispatch: Dispatch<any> = useDispatch();
   
   return (
     <div className="flex">
@@ -96,12 +113,14 @@ import adminApi from '../../../services/adminApi';
 
       </div>
       <div className="h-screen flex-1 bg-gray-300">
-        <Navbar />
-        <div className='mt-2 ml-2 mr-2 mb-2'>
-        {location.pathname === "/admin/dashboard/hotels" && <HotelListingTable />}
-            {location.pathname === "/admin/dashboard/addHotel" && <AddHotel/>}
-        </div>
-      </div>
+  <Navbar />
+  <div className='mt-2 ml-2 mr-2 mb-2'>
+    {url.pathname === "/admin/dashboard/hotels" && <HotelListingTable />}
+    {url.pathname === "/admin/dashboard/addHotel" && <AddHotel />}
+    {url.pathname.startsWith("/admin/dashboard/editHotel/") && <AddHotel />}
+    {(url.pathname.startsWith("/admin/dashboard/editHotel/") || url.pathname === "/admin/dashboard/editHotel") && <AddHotel />}
+  </div>
+</div>
     </div>
   );
 };

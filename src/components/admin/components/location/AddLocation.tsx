@@ -7,7 +7,10 @@ import 'leaflet/dist/leaflet.css';
 import Geocoder from './Geocoder';
 import ChangeView from './ChangeView';
 import { ErrorBoundary } from 'react-error-boundary';
-
+import { RootState } from 'src/redux/store';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { useDispatch } from 'react-redux';
 
 const AddLocation = () => {
   const {
@@ -16,7 +19,29 @@ const AddLocation = () => {
     },
     dispatch,
   } = useValue();
-
+  //  const dispatchRedux = useDispatch();
+  // const { hotelId } = useParams();
+  const hotelId = new URLSearchParams(window.location.search).get('hotelId');
+  const hotels = useSelector((state: RootState) => state.hotel.hotels);
+  const isEditMode = Boolean(new URLSearchParams(window.location.search).get('hotelId'));
+  
+  
+  
+  useEffect(() => {
+  
+    if (hotels.length>0&& isEditMode) {
+  
+      const hotelToUpdate = hotels.find((hotel: any) => hotel._id === hotelId);
+  
+      if (hotelToUpdate) {
+        dispatch({
+          type: 'UPDATE_LOCATION',
+          payload: { lat: hotelToUpdate.location.lat, lng: hotelToUpdate.location.lng },
+        });
+      }
+    }
+  }, [isEditMode, hotelId, hotels, dispatch]);
+  
   const mapRef = useRef<any>(null);
 
   useEffect(() => {

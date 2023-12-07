@@ -12,17 +12,7 @@ import { setHotels } from '../redux/slices/hotelSlice';
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await api.getAllHotels();
-  //       dispatch(setHotels(response as any));
-  //     } catch (error) {
-  //       console.error('Error fetching hotel data:', error);
-  //     }
-  //   };    
-  //   fetchData();
-  // }, []);
+
   const user = useSelector((state: RootState) => state.auth.user);
 
 

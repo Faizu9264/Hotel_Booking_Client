@@ -85,6 +85,24 @@ interface State {
     images: string[];
   } | null;
 }
+const initialState: State = {
+  openLogin: false,
+  loading: false,
+  alert: { open: false, severity: 'info', message: '' },
+  images: [],
+  details: {
+    hotelName: '',
+    location: '',
+    contactNo: '',
+    emailAddress: '',
+    minRent: 100,
+    amenities: [],
+    description: '',
+  },
+  location: { lng: 0, lat: 0 },
+  hotelDetails: null,
+};
+
 
 type Action =
   | { type: 'START_LOADING' }
@@ -94,7 +112,9 @@ type Action =
   | { type: 'DELETE_IMAGE'; payload: string }
   | { type: 'UPDATE_DETAILS'; payload: Partial<State['details']> }
   | { type: 'UPDATE_LOCATION'; payload: State['location'] }
-  | { type: 'SET_HOTEL_DETAILS'; payload: State['hotelDetails'] };
+  | { type: 'SET_HOTEL_DETAILS'; payload: State['hotelDetails'] }
+  | { type: 'RESET_HOTEL_STATE' };
+
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -117,6 +137,8 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, location: action.payload };
     case 'SET_HOTEL_DETAILS':
       return { ...state, hotelDetails: action.payload };
+      case 'RESET_HOTEL_STATE':
+        return initialState;
     default:
       throw new Error('No matched action!');
   }

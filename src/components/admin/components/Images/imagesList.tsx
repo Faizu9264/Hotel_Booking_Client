@@ -1,12 +1,16 @@
 import { Cancel } from '@mui/icons-material';
 import { IconButton, ImageList, ImageListItem, ImageListItemBar } from '@mui/material';
-import React from 'react';
+import React,{useEffect} from 'react';
 import { useValue } from '../../../../context/ContextProvider';
 import deleteFile from '../../../../firebase/deleteFile';
+
 
 const ImagesList: React.FC = () => {
   const { state, dispatch } = useValue();
   const { images } = state;
+  
+
+
 
   const handleDelete = async (image: string) => {
     dispatch({ type: 'DELETE_IMAGE', payload: image });

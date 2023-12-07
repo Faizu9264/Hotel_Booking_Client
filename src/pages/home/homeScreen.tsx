@@ -19,11 +19,11 @@ const HomeScreen: React.FC = () => {
 
   const handleFindHotels = async() => {
     try {
+      if(hotels.length<=0){
         const response = await api.getAllHotels();
         dispatch(setHotels(response as any));
-        if(response){
-            navigate('/user/find-hotels');
-        }
+    }
+    navigate('/user/find-hotels');
 
       } catch (error) {
         console.error('Error fetching hotel data:', error);

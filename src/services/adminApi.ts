@@ -43,6 +43,25 @@ const adminApi = {
       throw new Error(error.message);
     }
   },
+  updateHotel: async (hotelId: string, updatedDetails: any) => {
+    try {
+      
+      const response = await axiosInstance.patch(
+        `${ADMIN_API_BASE_URL}/hotel/update/${hotelId}`,
+        updatedDetails,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
+
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
 
   getAllHotels: createAsyncThunk('hotel/getAllHotels', async (_, { dispatch }) => {
     try {
