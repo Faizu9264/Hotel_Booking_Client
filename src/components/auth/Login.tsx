@@ -52,20 +52,27 @@ const Login: React.FC = () => {
       }
       
       try {
-        const user = await api.login(email, password);
-  
+        const response = await api.login(email, password);
+         const user = response.user
+         console.log('user://',user);
+         
         localStorage.setItem('userData', JSON.stringify({ email, ...user }));
   
         dispatch(setUserData({ email, ...user }));
         
-        if (user.message === 'Login successful') {
-          toast.success('Login successful');
+        if(userData?.blocked){
+          toast.error('Your account hasbeen blocked');
+          navigate('/login'); 
+        }else{
+          if (response.message === 'Login successful') {
+            toast.success('Login successful');
+            
+            navigate('/'); 
           
-          navigate('/'); 
-        
-          dispatch(setLoginStatus(true));
-        } else {
-          toast.error('Invalid credentials. Please try again.');
+            dispatch(setLoginStatus(true));
+          } else {
+            toast.error('Invalid credentials. Please try again.');
+          }
         }
       } catch (error) {
         console.error('Error during login:', error);

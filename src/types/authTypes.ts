@@ -1,13 +1,15 @@
 // src/types/authTypes.ts
 export interface UserData {
-  id?:string;
+  _id:string;
   username: string;
   email: string;
   password?: string;
+  phoneNumber?:number;
   token?:string;
   isGoogle?:boolean
   confirmPassword?: string;
   profileImage?: string;
+  blocked?: boolean;
 }
 
 

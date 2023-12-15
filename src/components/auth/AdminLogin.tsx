@@ -38,6 +38,11 @@ const AdminLogin = () => {
       dispatch(setAdminData({ email, ...admin }));
       if(admin){
         dispatch(setAdminLoginStatus(true));
+       
+  const isAdminLoggedInFromLocalStorage = localStorage.getItem('adminData') !== null;
+
+  dispatch(setAdminLoginStatus(isAdminLoggedInFromLocalStorage));
+  
       }
       localStorage.setItem('adminData', JSON.stringify({ email, ...admin }));
       if (admin.message === 'Admin login successful') {

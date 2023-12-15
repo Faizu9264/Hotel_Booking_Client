@@ -46,12 +46,13 @@ const handleResponse = async (response: any) => {
       const decodedToken: DecodedToken = jwtDecode(token);
       console.log('Decoded Token:', decodedToken);
   
-      const { sub:id, email, given_name: username, picture: profileImage } = decodedToken;
-      dispatch(setUserData({id, email, username, profileImage, token, isGoogle: true }));
-      console.log('User Details:', { email, username, profileImage });
+      const {sub, email, given_name: username, picture: profileImage } = decodedToken;
+      const _id = sub;
+      dispatch(setUserData({_id, email, username, profileImage, token, isGoogle: true }));
+      console.log('User Details:', { email, username, profileImage,token });
   
-      localStorage.setItem('userData', JSON.stringify({ id, email, username, profileImage, token, isGoogle: true }));
-      const apiResponse = await api.googleLogin(email, username,token, true);
+      localStorage.setItem('userData', JSON.stringify({_id, email, username, profileImage, token, isGoogle: true }));
+      const apiResponse = await api.googleLogin(_id,email, username,profileImage,token, true);
   
       if (apiResponse.message === 'Login successful') {
         toast.success('Login successful');

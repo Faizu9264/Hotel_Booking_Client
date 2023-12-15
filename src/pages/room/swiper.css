@@ -1,0 +1,14 @@
+.swiper{
+    background: #eee;
+    height: fit-content;
+}
+
+.swiper-wraper{
+    align-items: center;
+}
+
+.swiper-slider img{
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+}

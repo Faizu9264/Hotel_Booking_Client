@@ -1,28 +1,23 @@
-
 {
   "compilerOptions": {
     "target": "es2015",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    // "noImplicitAny": false,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noEmit": true,
     "resolveJsonModule": true,
     "baseUrl": "./",
     "paths": {
-      "*": ["*","src/*","maplibre-gl-geocoder.d.ts"]
+      "*": ["*", "src/*", "maplibre-gl-geocoder.d.ts"]
     },
-    
     "typeRoots": ["./", "node_modules/@types"],
     "types": ["react", "react-dom", "react-redux"]
-  },  
+  },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "build", "dist"]
 }

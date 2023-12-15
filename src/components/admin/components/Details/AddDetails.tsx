@@ -34,12 +34,13 @@ const AddDetails = () => {
   const hotels = useSelector((state: RootState) => state.hotel.hotels);
   const isEditMode = Boolean(new URLSearchParams(window.location.search).get('hotelId'));
   const hotelId = new URLSearchParams(window.location.search).get('hotelId');
-  
+
   useEffect(() => {
     if (hotels.length > 0 && isEditMode) {
       const hotelToUpdate = hotels.find((hotel: any) => {
         return hotel._id === hotelId;
       });
+
   
       if (hotelToUpdate) {
         // dispatch(setHotelDetails(hotelToUpdate.details));

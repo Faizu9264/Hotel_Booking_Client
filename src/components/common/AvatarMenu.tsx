@@ -5,7 +5,8 @@ import { UserData } from "../../types/authTypes";
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from "../../redux/actions/authActions";
 import { RootState } from '../../redux/store';
-import { useDispatch, useSelector } from 'react-redux';
+import UserProfileModal from '../user/UserProfileModal';
+import { useDispatch ,useSelector} from "react-redux";
 
 
 const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
@@ -14,14 +15,24 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector((state: RootState) => state.auth.user);
+  const [isProfileModalOpen, setProfileModalOpen] = useState(false);
+
+  const handleOpenProfileModal = () => {
+    setProfileModalOpen(true);
+  };
+
+
   const handleLogout = () => {
-    localStorage.removeItem('userData')
+    localStorage.removeItem('userData');
     dispatch(logoutUser());
-    // dispatch(setLoginStatus(false));
     navigate('/');
   };
+
+  const handleCloseProfileModal = () => {
+    setProfileModalOpen(false);
+  };
+
   useEffect(() => {
-    
     const handleDropDown = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setMenuOpen(false);
@@ -35,12 +46,6 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
     };
   }, []);
 
-  const navigation = [
-    { title: "Profile", path: "/user/profile" },
-  ];
-  const handleButtonClick = () => {  
-    setMenuOpen(!menuOpen);
-  };
   return (
     <div className="relative ml-auto">
       {userData && (
@@ -48,7 +53,9 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
           <button
             ref={profileRef}
             className="w-10 h-10 outline-none rounded-full ring-offset-2 ring-gray-200 block"
-            onClick={handleButtonClick}
+            onClick={() => {
+           
+              setMenuOpen(!menuOpen)}} 
           >
             <img
               src={userData.profileImage || "/logo/profile.png"}
@@ -56,22 +63,21 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
               className="w-full h-full rounded-full"
             />
           </button>
-          
 
           {/* Dropdown content */}
-          {menuOpen &&(
-            <ul className="bg-white top-14 right-0 mt-0 space-y-6 absolute border rounded-md w-52 shadow-md space-y-0 mt-0" style={{zIndex:'2000'}}>
-              <li><p className="block text-gray-600 hover:text-gray-900 p-3">{userData.username?userData.username:userData.email}</p></li>
-              {navigation.map((item, idx) => (
-                <li key={idx}>
-                  <NavLink
-                    to={item.path}
-                    className="block text-gray-600 hover:text-gray-900 p-3"
-                  >
-                    {item.title}
-                  </NavLink>
-                </li>
-              ))}
+          {menuOpen && (
+            <ul className="bg-white top-14 right-0 mt-0 space-y-6 absolute border rounded-md w-52 shadow-md space-y-0 mt-0" style={{ zIndex: '2000' }}>
+              <li><p className="block text-gray-600 hover:text-gray-900 p-3">{userData.username ? userData.username : userData.email}</p></li>
+              <li>
+                <NavLink
+                  to=""
+                  className="block text-gray-600 hover:text-gray-900 p-3"
+                  onClick={() => {   handleOpenProfileModal()
+                    setMenuOpen(false)}} 
+                >
+                  Profile
+                </NavLink>
+              </li>
               <button onClick={handleLogout} className="block w-full text-justify text-gray-600 hover:text-gray-900 border-t py-3 p-3">
                 Logout
               </button>
@@ -79,6 +85,8 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
           )}
         </div>
       )}
+     {isProfileModalOpen && <UserProfileModal user={userData} isOpen={isProfileModalOpen} onClose={handleCloseProfileModal} />}
+
     </div>
   );
 };

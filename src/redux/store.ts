@@ -7,12 +7,15 @@ import adminReducer from './reducers/adminReducer';
 import thunk from 'redux-thunk';
 import hotelSlice from './slices/hotelSlice';
 import mapReducer from './slices/mapSlice';
-
+import roomReducer from './slices/roomSlice'
+import singleRoomSlice from './slices/singleRoomSlice';
 const rootReducer = combineReducers({
   auth: authReducer,
   admin:adminReducer,
   hotel:hotelSlice,
   map: mapReducer,
+  rooms:roomReducer,
+  room:singleRoomSlice
 });
 
 const store = configureStore({

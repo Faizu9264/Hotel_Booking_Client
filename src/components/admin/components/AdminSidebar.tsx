@@ -16,14 +16,19 @@ import Navbar from './AdminNavbar';
 import HotelListingTable from './Hotel/HotelListingTable';
 // import AddLocation from './location/AddLocation';
 import AddHotel from './Hotel/AddHotel'
+import AddRooms from './Room/AddRoom'
 import { useLocation } from 'react-router-dom';
 import { Dispatch } from 'redux';
 import { useDispatch } from 'react-redux';
 import adminApi from '../../../services/adminApi';
 import { useValue } from '../../../context/ContextProvider';
-
+import RoomListingTable from './Room/RoomListing';
+import { clearSingleRoomDetails }  from '../../../redux/slices/singleRoomSlice'
+import useCheckToken from '../../../services/tokenUtils';
+import UserListingTable from './Users/userListing';
 
  const Sidebar: React.FC = () => {
+  useCheckToken()
   const [open, setOpen] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
   const url = useLocation();
@@ -33,8 +38,10 @@ import { useValue } from '../../../context/ContextProvider';
     },
     dispatch,
   } = useValue();
+  const reduxdispatch = useDispatch();
   const isEditMode = Boolean(new URLSearchParams(window.location.search).get('hotelId'));
-
+  const isRoomEditMode = Boolean(new URLSearchParams(window.location.search).get('roomId'));
+  
   const Menus = [
     { title: "Dashboard", icon: faHome, route: "/admin/dashboard/" },
     { title: "Users", icon: faUser, route: "/admin/dashboard/users" },
@@ -51,10 +58,11 @@ import { useValue } from '../../../context/ContextProvider';
   };
 
 useEffect(()=>{
-  console.log('hi');
 
-    console.log('hello');
-    
+    if(!isRoomEditMode){
+   
+      reduxdispatch(clearSingleRoomDetails());
+    }
     if (!isEditMode) {
       dispatch({ type: 'RESET_HOTEL_STATE' });
     }
@@ -119,6 +127,12 @@ useEffect(()=>{
     {url.pathname === "/admin/dashboard/addHotel" && <AddHotel />}
     {url.pathname.startsWith("/admin/dashboard/editHotel/") && <AddHotel />}
     {(url.pathname.startsWith("/admin/dashboard/editHotel/") || url.pathname === "/admin/dashboard/editHotel") && <AddHotel />}
+    {url.pathname === "/admin/dashboard/rooms" && <RoomListingTable />}
+    {(url.pathname.startsWith("/admin/dashboard/addRoom/") || url.pathname === "/admin/dashboard/addRoom") && <AddRooms />}
+    {url.pathname.startsWith("/admin/dashboard/editRoom/") && <AddRooms />}
+    {(url.pathname.startsWith("/admin/dashboard/editRoom/") || url.pathname === "/admin/dashboard/editRoom") && <AddRooms />}
+    {url.pathname === "/admin/dashboard/users" && <UserListingTable/>}
+
   </div>
 </div>
     </div>

@@ -1,135 +1,3 @@
-// import axios from 'axios';
-
-// const API_BASE_URL = 'http://localhost:5000/user';
-
-// let userData: any = {};
-
-// const api = {
-//   sendOTP: async (email: string) => {
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/signup`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         credentials: 'include',
-//         body: JSON.stringify({ email }),
-//       });
-
-//       if (!response.ok) {
-//         const errorMessage = await response.text();
-//         throw new Error(errorMessage);
-//       }
-
-//       return response.json();
-//     } catch (error: any) {
-//       throw new Error(error.message);
-//     }
-//   },
-
-//   verifyOTP: async (otp: string) => {
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/verify-otp`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         credentials: 'include',
-//         body: JSON.stringify({ email: userData.email, otp }),
-//       });
-
-//       if (!response.ok) {
-//         const errorMessage = await response.text();
-//         throw new Error(errorMessage);
-//       }
-
-//       return response.json();
-//     } catch (error: any) {
-//       throw new Error(error.message);
-//     }
-//   },
-
-//   completeSignup: async () => {
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/complete-signup`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         credentials: 'include',
-//         body: JSON.stringify(userData),
-//       });
-
-//       if (!response.ok) {
-//         const errorMessage = await response.text();
-//         throw new Error(errorMessage);
-//       }
-
-//       return response.json();
-//     } catch (error: any) {
-//       throw new Error(error.message);
-//     }
-//   },
-
-//   setUserData: (data: any) => {
-//     userData = { ...userData, ...data };
-//   },
-
-//   login: async (email: string, password: string) => {
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/login`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         credentials: 'include',
-//         body: JSON.stringify({ email, password }),
-//       });
-
-//       if (!response.ok) {
-//         const errorMessage = await response.text();
-//         throw new Error(errorMessage);
-//       }
-
-//       return response.json();
-//     } catch (error: any) {
-//       throw new Error(error.message);
-//     }
-//   },
-
-//   googleLogin: async (email: string, username: string, token: string, isGoogle: boolean) => {
-//     try {
-//       const response = await fetch(`${API_BASE_URL}/google-login`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         credentials: 'include',
-//         body: JSON.stringify({ email, username, token, isGoogle }),
-//       });
-
-//       if (!response.ok) {
-//         const errorMessage = await response.text();
-//         throw new Error(errorMessage);
-//       }
-
-//       return response.json();
-//     } catch (error: any) {
-//       throw new Error(error.message);
-//     }
-//   },
-
-//   resendOTP: async (email: string): Promise<any> => {
-//     try {
-//       const response = await axios.post(`${API_BASE_URL}/resend-otp`, { email });
-//       return response.data;
-//     } catch (error) {
-//       throw error;
-//     }
-//   },
-// };
-
-// export default api;
 
 
 
@@ -137,15 +5,17 @@
 // userApi.ts
 import createAxiosInstance from './axiosConfig';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-
+// import jwt from 'jsonwebtoken';
 const API_BASE_URL = 'http://localhost:5000/user';
-import { setRefreshToken, removeRefreshToken } from './tokenHandler';
-import { setHotels } from '../redux/slices/hotelSlice'
-const axiosInstance = createAxiosInstance(API_BASE_URL);
+const axiosInstance = createAxiosInstance(API_BASE_URL, 'UserToken');
 
 let userData: any = {};
 
- 
+const base64Decode = (str: string) => {
+  return decodeURIComponent(atob(str).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+};
 
 const api = {
   sendOTP: async (email: string) => {
@@ -181,23 +51,44 @@ const api = {
 
   login: async (email: string, password: string) => {
     try {
-      console.log(' email, password', email, password);
-      
+
+  
       const response = await axiosInstance.post('/login', { email, password });
-
+  
+      // Access token is under the 'message' key in the response
       const accessToken = response.data.accessToken;
-       
-      const refreshToken = response.data.refreshToken;
-      setRefreshToken(refreshToken);
-
+      
+      localStorage.setItem('UserToken', accessToken);
+  
+      if (!accessToken) {
+        console.error('Access token is missing or invalid');
+        throw new Error('Access token is missing or invalid');
+      }
+  
+      // Decode and parse access token payload
+      const payloadBase64 = accessToken.split('.')[1];
+      const payload = base64Decode(payloadBase64);
+      const payloadObject = JSON.parse(payload);
+  
+      const _id = payloadObject.userId || null;
+  
+      // Update to use the user data from the response
+      api.setUserData({ ...response.data.user, _id });
+ 
+  
       return response.data;
     } catch (error: any) {
+      console.error('Error during login:', error);
       throw new Error(error.message);
     }
   },
-  googleLogin: async (email: string, username: string, token: string, isGoogle: boolean) => {
+  
+  googleLogin: async (_id:string,email: string, username: string,profileImage:string, token: string, isGoogle: boolean) => {
     try {
-      const response = await axiosInstance.post('/google-login', { email, username, token, isGoogle });
+      const response = await axiosInstance.post('/google-login', {_id, email, username,profileImage, token, isGoogle });
+      const accessToken = response.data.accessToken;
+      localStorage.setItem('UserToken', accessToken);
+
       return response.data;
     } catch (error: any) {
       throw new Error(error.message);
@@ -212,6 +103,24 @@ const api = {
       throw error;
     }
   },
+  updateUserProfile: async (userId: string, data: any) => {
+    try {
+      const response = await axiosInstance.patch(`/${userId}/update-profile`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  changePassword: async (userId: string, data: any) => {
+    try {
+      const response = await axiosInstance.patch(`/${userId}/change-password`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+    
   getAllHotels:async()=>{
     try {
       console.log('Attempting to fetch hotels...');
@@ -229,7 +138,25 @@ const api = {
       console.error('Error fetching hotels:', error.message);
       throw new Error(error.message);
     }
-  }
+  },
+  getRoomsByHotelId: async (hotelId: string): Promise<any> => {
+    try {
+      console.log('Attempting to fetch rooms...');
+      const response = await axiosInstance.get(`/room/by-hotel/${hotelId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+      console.log('Rooms Response:', response);
+      const rooms = response.data;
+
+      return rooms;
+    } catch (error: any) {
+      console.error('Error fetching rooms:', error.message);
+      throw new Error(error.message);
+    }
+  },
 
 };
 

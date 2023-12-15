@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { clearAdminData } from '../../../redux/actions/adminActions';
+import { logoutAdmin} from '../../../redux/actions/adminActions';
 import { useNavigate } from 'react-router-dom';
 import { setAdminData, setAdminLoginStatus } from '../../../redux/actions/adminActions';
 
@@ -11,10 +11,11 @@ const Navbar: React.FC = () => {
   const dispatch = useDispatch();
 const navigate = useNavigate()
   const handleLogout = () => {
-    dispatch(clearAdminData());
+    dispatch(logoutAdmin());
   dispatch(setAdminLoginStatus(false));
   localStorage.removeItem('adminData');
   localStorage.removeItem('adminLoginStatus');
+  localStorage.removeItem('AdminToken')
     navigate('/admin/login');
   };
   return (

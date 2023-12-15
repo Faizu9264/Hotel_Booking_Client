@@ -11,26 +11,29 @@ import { useNavigate } from 'react-router-dom';
 interface PopupHotelProps {
   popupInfo: {
     properties: {
+      hotelId: string; 
       hotelName: string;
       minimumRent: number;
       hotelImage: string[];
       description: string;
     };
-
   };
 }
 interface CustomSwiperOptions {
   lazy?: boolean;
 }
 
-const PopupHotel: React.FC<PopupHotelProps> = ({ popupInfo }) => {
+const PopupHotel: React.FC<PopupHotelProps> = ({ popupInfo}) => {
   const navigate = useNavigate();
   console.log('popupInfo', popupInfo.properties);
-  const { hotelName, minimumRent, hotelImage, description } = popupInfo.properties;
-  console.log('hotelName', hotelName, hotelImage);
+  const { hotelId, hotelName, minimumRent, hotelImage, description } = popupInfo.properties;
+
+  const handleHotelClick = () => {
+    navigate(`/user/view-rooms?hotelId=${hotelId}`);
+  };
 
   return (
-    <div className="popup-hotel-container" style={{paddingBottom:'0px'}} onClick={() =>navigate('/user/view-hotels')}>
+    <div className="popup-hotel-container" style={{paddingBottom:'0px'}}  onClick={handleHotelClick}>
       
       <div className="popup-hotel-carousel">
         <Swiper

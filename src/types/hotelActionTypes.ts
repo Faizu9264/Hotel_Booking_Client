@@ -7,7 +7,6 @@ export interface Hotel {
   minRent: number;
   location: string;
   email: string;
-  amenities: string[];
   images: string[];
   description: string;
   phone: Number;

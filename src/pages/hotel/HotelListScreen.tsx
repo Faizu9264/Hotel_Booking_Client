@@ -20,12 +20,15 @@ import { LocationOnOutlined, Pin, StarBorder } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import PriceSlider from '../../components/searchBar/PriceSlider';
-
+import { useNavigate } from 'react-router-dom';
 const PAGE_SIZE = 6;
-
-const HotelListScreen: React.FC = () => {
+interface HotelListScreenProps {
+  onHotelClick: (hotelId: string) => void;
+}
+const HotelListScreen: React.FC<HotelListScreenProps> = ({ onHotelClick }) => {
   const allHotels = useSelector((state: RootState) => state.hotel.filteredHotels);
-  console.log('allHotels:.,.',allHotels);
+  const navigate = useNavigate();
+
   
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -51,7 +54,9 @@ const HotelListScreen: React.FC = () => {
     setLocationQuery(query); 
     setCurrentPage(1);
   };
-  
+  const handleHotelClick = (hotelId: string) => {
+    onHotelClick(hotelId);
+  };
 
   return (
     <Container sx={{ p: 5 }}>
@@ -81,8 +86,8 @@ const HotelListScreen: React.FC = () => {
       >
         {currentHotels.map((hotel) => (
           <Tooltip title="Click to check room availability!" key={hotel._id}>
-          
-          <Card sx={{ width: '100%', height: '270px' }}>
+      
+      <Card sx={{ width: '100%', height: '270px', cursor: 'pointer' }} onClick={() => handleHotelClick(hotel._id)}>
               <ImageListItem sx={{ height: '100% !important' }}>
                 <ImageListItemBar
                   sx={{
