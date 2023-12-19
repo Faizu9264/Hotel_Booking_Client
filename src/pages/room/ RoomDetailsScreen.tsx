@@ -1,5 +1,5 @@
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef,useState } from 'react';
 import {
   AppBar,
   Dialog,
@@ -20,15 +20,19 @@ import { Navigation, Autoplay, EffectCoverflow, Lazy, Zoom } from 'swiper';
 import 'swiper/swiper-bundle.css';
 import { Box, Stack } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+import { setBookingDetails } from '../../redux/slices/bookingSlice';
+import { Room } from '../../types/RoomType';
 import Button from '@mui/material/Button';
 import WifiIcon from '@mui/icons-material/Wifi';
 import PoolIcon from '@mui/icons-material/Pool';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import SpaIcon from '@mui/icons-material/Spa';
+import { useDispatch } from 'react-redux';
 
 const Transition = forwardRef<unknown, SlideProps>((props, ref) => {
   return <Slide direction="up" {...props} ref={ref as React.Ref<unknown>} />;
 });
+
 
 
 const amenityIcons: Record<string, JSX.Element> = {
@@ -41,17 +45,32 @@ const amenityIcons: Record<string, JSX.Element> = {
 
 
 const RoomDetailsScreen = () => {
-  const room = useSelector((state: RootState) => state.rooms.roomDetails);
+  const selected: Room = useSelector((state: RootState) => state.room.roomDetails.selectedRoom);
+  const room = selected
+  console.log('room',room);
+  
+  const roomId = new URLSearchParams(window.location.search).get('roomId') ?? '';
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const handleClose = () => {
     navigate(-1);
   };
 
   const handleBookNow = () => {
-    // Add your logic for booking here
-    // For example, redirect to a booking page or show a booking modal
-    console.log('Book Now clicked!');
+    if (room) {
+      dispatch(
+        setBookingDetails({
+          roomDetails: {
+            ...room,
+            hotelId: room?.hotelId ?? '', 
+          },
+        })
+      );
+      navigate('/user/checkout', { state: { roomId } });
+    }
   };
+  
+
   return (
     <Dialog
       fullScreen
@@ -89,26 +108,30 @@ const RoomDetailsScreen = () => {
           }}
         >
           {room?.images?.map((url, index) => (
-            <SwiperSlide key={index}>
-              <div className="swiper-zoom-container">
-                <img
-                  src={url}
-                  alt={`room-${index}`}
-                  style={{ width: '60%', height: '60%' }}
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-          <Tooltip title={room?.hotelName}
-          sx={{
-            position:'absolute',
-            bottom:'8px',
-            left:'8px',
-            zIndex:2
-          }}>
-            <Avatar src={room?.images[0]}></Avatar>
-          </Tooltip>
-        </Swiper>
+    <SwiperSlide key={index}>
+      <div className="swiper-zoom-container">
+        <img
+          src={url}
+          alt={`room-${index}`}
+          style={{ width: '60%', height: '60%' }}
+        />
+      </div>
+    </SwiperSlide>
+  ))}
+  {room?.images && room.images.length > 0 && (
+    <Tooltip
+      title={room?.hotelName}
+      sx={{
+        position: 'absolute',
+        bottom: '8px',
+        left: '8px',
+        zIndex: 2
+      }}
+    >
+      <Avatar src={room?.images[0]}></Avatar>
+    </Tooltip>
+  )}
+</Swiper>
         <Stack sx={{ p: 1 }} spacing={2}>
   <Stack direction="row" sx={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
     <Box>
@@ -174,8 +197,8 @@ const RoomDetailsScreen = () => {
               alignItems: 'center',
               whiteSpace: 'nowrap',
               position: 'relative',
-              top: '0px', // Adjust this value as needed
-              verticalAlign: 'middle', // Add this line
+              top: '0px', 
+              verticalAlign: 'middle', 
             }}
           >
             {amenityIcons[amenity] && amenityIcons[amenity]}
@@ -222,18 +245,17 @@ const RoomDetailsScreen = () => {
           </Stack>
         </Stack>
         <Button
-          variant="contained"
-     
-          color="primary"
+          variant="contained" 
+          className='button1'
+          // color="primary"
           size="large"
           fullWidth
-          sx={{ borderRadius: 0, marginTop: 'auto', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)' }}
+          sx={{ borderRadius: 0, marginTop: 'auto', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',fontSize:'20px',fontWeight: 'bold'}}
           onClick={handleBookNow}
         >
-          Book Now
+          <span>Book Now</span>
         </Button>
         <div className='mb-5'>
-
         </div>
 
       </Container>

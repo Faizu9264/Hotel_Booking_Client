@@ -1,24 +1,19 @@
 // path-to-your/singleRoomSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Room } from '../../types/RoomType';
 
 interface SingleRoomState {
+  room: any[];
   roomDetails: {
-    id: string;
-    roomType: string;
-    hotelName: string;
-    hotelId:string;
-    amenities: string[];
-    rentAmount: number;
-    discountPrice: number;
-    roomsCount: number;
-    maxPeople: number;
-    description: string;
-    images: string[];
+    selectedRoom: Room; 
   };
 }
 
+
 const initialState: SingleRoomState = {
+  room:[],
   roomDetails: {
+    selectedRoom: {
     id: '',
     roomType: '',
     hotelName: '',
@@ -30,7 +25,7 @@ const initialState: SingleRoomState = {
     maxPeople: 0,
     description: '',
     images: [], 
-  },
+  }},
 };
 
 const singleRoomSlice = createSlice({
@@ -50,15 +45,15 @@ const singleRoomSlice = createSlice({
       };
     },    
     addImageToRoom: (state, action: PayloadAction<string>) => {
-      state.roomDetails.images.push(action.payload);
+      state.roomDetails.selectedRoom.images.push(action.payload);
     },
     removeImageFromRoom: (state, action: PayloadAction<string>) => {
-      state.roomDetails.images = state.roomDetails.images.filter(
+      state.roomDetails.selectedRoom.images = state.roomDetails.selectedRoom.images.filter(
         (image) => image !== action.payload
       );
     },
     updateRoomImages: (state, action: PayloadAction<string[]>) => {
-      state.roomDetails.images = action.payload;
+      state.roomDetails.selectedRoom.images = action.payload;
     },
   },
 });

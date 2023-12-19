@@ -64,7 +64,7 @@ const CustomDialog = styled(Dialog)(({ theme }) => ({
 const AddDetails = () => {
   const dispatch: Dispatch<any> = useDispatch();
   const [selectedHotel, setSelectedHotel] = useState<HotelData | null>(null);
-  const singleRoomDetails = useSelector((state: RootState) => state.room.roomDetails) || {};
+  const singleRoomDetails = useSelector((state: RootState) => state.room.roomDetails.selectedRoom) || {};
   const isEditMode = Boolean(new URLSearchParams(window.location.search).get('roomId'));
   const roomId = new URLSearchParams(window.location.search).get('roomId');
   const rooms = useSelector((state: RootState) => state.rooms.rooms);

@@ -8,7 +8,7 @@ import deleteFile from '../../../../firebase/deleteFile';
 
 const ImagesList: React.FC = () => {
   const dispatch = useDispatch();
-  const { images } = useSelector((state: RootState) => state.room.roomDetails);
+  const { images } = useSelector((state: RootState) => state.room.roomDetails.selectedRoom);
 
   const handleDelete = async (image: string) => {
     dispatch(removeImageFromRoom(image));

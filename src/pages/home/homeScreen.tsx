@@ -14,7 +14,7 @@ import api from '../../services/userApi';
 import { setHotels } from '../../redux/slices/hotelSlice';
 import { RootState } from '../../redux/store';
 import UserProfileModal from '../../components/user/UserProfileModal';
-
+import BookingPage from '../Booking/BookingPage'; 
 
 interface HomeScreenProps {
   handleOpenProfileModal: () => void;
@@ -73,6 +73,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ handleOpenProfileModal }) => {
       ) : 
       location.pathname.startsWith('/user/room-details') ? (
         <RoomDetailsScreen /> 
+      ) : 
+      location.pathname.startsWith('/user/checkout') ? (
+        <BookingPage/> 
       ) : 
       (
         <Box sx={{ position: 'relative' }}>

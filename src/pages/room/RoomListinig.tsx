@@ -13,7 +13,12 @@ import {
   Typography,
   Pagination,
   TextField,
+  Box
 } from '@mui/material';
+import Header from './Header';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -22,6 +27,7 @@ import RoomPriceSlider from '../../components/searchBar/RoomPriceSlider';
 import api from '../../services/userApi'; 
 import { useDispatch } from 'react-redux';
 import { setRooms,clearAddress,setRoomDetails } from '../../redux/slices/roomSlice';
+import { setSingleRoomDetails, clearSingleRoomDetails,updateSingleRoomDetails } from '../../redux/slices/singleRoomSlice';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 const PAGE_SIZE = 6;
@@ -34,11 +40,11 @@ interface RoomListScreenProps {
 const RoomListScreen: React.FC<RoomListScreenProps> = ({ onRoomClick }) => {
   const hotelId = new URLSearchParams(window.location.search).get('hotelId') ?? '';
   const allRooms = useSelector((state: RootState) => state.rooms.filteredRooms);
-  console.log('allRooms',allRooms)
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchRooms = async () => {
@@ -90,13 +96,22 @@ const RoomListScreen: React.FC<RoomListScreenProps> = ({ onRoomClick }) => {
 
   const handleRoomClick = (roomId: string) => {
     const selectedRoom = allRooms.find((room) => room._id === roomId);
-    dispatch(setRoomDetails(selectedRoom));
+    console.log('selectedRoom',selectedRoom);
+    
+    dispatch(setSingleRoomDetails({selectedRoom}));
+    dispatch(updateSingleRoomDetails({ hotelId }));
     onRoomClick(roomId);
   };
+
+  
+
   
   return (
+    <>
+     <Header />
     <Container sx={{ p: 5 }}>
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
+      
         <Grid item xs={6} sm={6}>
           <TextField
             label="Search Room"
@@ -105,9 +120,10 @@ const RoomListScreen: React.FC<RoomListScreenProps> = ({ onRoomClick }) => {
             margin="normal"
             value={searchQuery}
             onChange={handleSearchChange}
-            sx={{ width: '80%' }} 
+            sx={{ width: '90%' }} 
           />
         </Grid>
+        
         <Grid item xs={6} sm={6}>
         <RoomPriceSlider />
         </Grid>
@@ -161,16 +177,9 @@ const RoomListScreen: React.FC<RoomListScreenProps> = ({ onRoomClick }) => {
         />
       </Container>
     </Container>
+    </>
   );
 };
 
 export default RoomListScreen;
-
-
-
-
-
-
-
-
 

@@ -17,7 +17,7 @@ const ProgressItem: React.FC<ProgressItemProps> = ({ file }) => {
   const [progress, setProgress] = useState<number>(0);
   const [imageURL, setImageURL] = useState<string | null>(null);
   const dispatch = useDispatch();
-  const roomImages = useSelector((state: RootState) => state.room.roomDetails.images);
+  const roomImages = useSelector((state: RootState) => state.room.roomDetails.selectedRoom.images);
 
   useEffect(() => {
     const uploadImage = async () => {

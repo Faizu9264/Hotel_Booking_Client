@@ -12,7 +12,7 @@ import { setSingleRoomDetails, clearSingleRoomDetails } from '../../../../redux/
 import { RootState } from 'src/redux/store';
 import { setRooms, setAddressFilter, setPriceFilter, clearAddress } from '../../../../redux/slices/roomSlice';
 
-
+import { Room } from '../../../../types/RoomType';
 interface RoomDetails {
   id: string;
   roomType: string;
@@ -28,7 +28,8 @@ interface RoomDetails {
 }
 export const AddRooms = () => {
   const dispatch = useDispatch();
-  const singleRoomDetails = useSelector((state: RootState) => state.room.roomDetails);
+  const selected: Room = useSelector((state: RootState) => state.room.roomDetails.selectedRoom);
+  const  singleRoomDetails = selected
   const [activeStep, setActiveStep] = useState(0);
   const [steps, setSteps] = useState([
     { label: 'Details', completed: false },

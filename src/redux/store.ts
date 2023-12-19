@@ -9,13 +9,15 @@ import hotelSlice from './slices/hotelSlice';
 import mapReducer from './slices/mapSlice';
 import roomReducer from './slices/roomSlice'
 import singleRoomSlice from './slices/singleRoomSlice';
+import bookingReducer from './slices/bookingSlice';
 const rootReducer = combineReducers({
   auth: authReducer,
   admin:adminReducer,
   hotel:hotelSlice,
   map: mapReducer,
   rooms:roomReducer,
-  room:singleRoomSlice
+  room:singleRoomSlice,
+  booking: bookingReducer,
 });
 
 const store = configureStore({

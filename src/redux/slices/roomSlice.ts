@@ -15,6 +15,7 @@ interface RoomState {
     discountPrice: number;
     roomsCount: number;
     maxPeople: number;
+    hotelId:string;
     description: string;
     images: string[];
   } | null;

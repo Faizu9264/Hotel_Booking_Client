@@ -36,7 +36,7 @@ const RoomPriceSlider: React.FC = () => {
           min={100}
           max={3500}
           defaultValue={3500}
-          sx={{ width: '97%', color: 'black' }}
+          sx={{ width: '97%', color: 'grey' }}
           valueLabelDisplay="auto"
           marks={marks}
           value={priceFilter !== undefined ? priceFilter : 3500}
