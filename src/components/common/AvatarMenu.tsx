@@ -4,9 +4,10 @@ import { NavLink } from "react-router-dom";
 import { UserData } from "../../types/authTypes";
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from "../../redux/actions/authActions";
-import { RootState } from '../../redux/store';
 import UserProfileModal from '../user/UserProfileModal';
+import { RootState } from '../../redux/store';
 import { useDispatch ,useSelector} from "react-redux";
+
 
 
 const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
@@ -27,6 +28,11 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
     dispatch(logoutUser());
     navigate('/');
   };
+
+  const handleBookings = () => {
+    console.log('heyyy');
+  };
+  
 
   const handleCloseProfileModal = () => {
     setProfileModalOpen(false);
@@ -76,6 +82,13 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
                     setMenuOpen(false)}} 
                 >
                   Profile
+                </NavLink>
+                <NavLink
+                  to="/user/bookings"
+                  className="block text-gray-600 hover:text-gray-900 p-3"
+                  onClick={handleBookings} 
+                >
+                  MyBookings
                 </NavLink>
               </li>
               <button onClick={handleLogout} className="block w-full text-justify text-gray-600 hover:text-gray-900 border-t py-3 p-3">

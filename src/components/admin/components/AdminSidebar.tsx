@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from 'react';
+import React, { useState ,useEffect, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -24,11 +24,15 @@ import adminApi from '../../../services/adminApi';
 import { useValue } from '../../../context/ContextProvider';
 import RoomListingTable from './Room/RoomListing';
 import { clearSingleRoomDetails }  from '../../../redux/slices/singleRoomSlice'
-import useCheckToken from '../../../services/tokenUtils';
+import checkTokenExpiration from '../../../services/tokenUtils';
 import UserListingTable from './Users/userListing';
-
+import { Socket, io } from 'socket.io-client';
+import { logoutAdmin } from '../../../redux/actions/adminActions';
+import { useNavigate } from 'react-router-dom';
+import BookingListingTable from './Bookings/BookingListingTable';
  const Sidebar: React.FC = () => {
-  useCheckToken()
+  // useCheckToken()
+
   const [open, setOpen] = useState(true);
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
   const url = useLocation();
@@ -41,6 +45,16 @@ import UserListingTable from './Users/userListing';
   const reduxdispatch = useDispatch();
   const isEditMode = Boolean(new URLSearchParams(window.location.search).get('hotelId'));
   const isRoomEditMode = Boolean(new URLSearchParams(window.location.search).get('roomId'));
+  const currentAdminString:any = localStorage.getItem('adminData');
+  const currentAdminToken:any = localStorage.getItem('AdminToken');
+
+  console.log('currentAdmin', currentAdminString);
+  console.log('currentAdminToken', currentAdminToken);
+ const navigate = useNavigate()
+  const currentAdmin = JSON.parse(currentAdminString);
+    checkTokenExpiration(currentAdminToken, logoutAdmin, navigate);
+ 
+ 
   
   const Menus = [
     { title: "Dashboard", icon: faHome, route: "/admin/dashboard/" },
@@ -56,6 +70,14 @@ import UserListingTable from './Users/userListing';
   const handleMenuClick = (title: string) => {
     setSelectedMenu(title);
   };
+  const socket = useRef<Socket| null>(); 
+ 
+  useEffect(()=>{ 
+    if(!socket.current && currentAdmin){ 
+      socket.current = io('http://localhost:5000') 
+      socket.current.emit('addUser',(currentAdmin?._id)) 
+    } 
+  },[socket, currentAdmin])
 
 useEffect(()=>{
 
@@ -132,6 +154,8 @@ useEffect(()=>{
     {url.pathname.startsWith("/admin/dashboard/editRoom/") && <AddRooms />}
     {(url.pathname.startsWith("/admin/dashboard/editRoom/") || url.pathname === "/admin/dashboard/editRoom") && <AddRooms />}
     {url.pathname === "/admin/dashboard/users" && <UserListingTable/>}
+    {url.pathname === "/admin/dashboard/bookings" && <BookingListingTable />}
+
 
   </div>
 </div>

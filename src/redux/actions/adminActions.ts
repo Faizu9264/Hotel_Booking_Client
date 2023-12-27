@@ -18,10 +18,9 @@ export const setAdminData = (adminData: Partial<AdminData>): AnyAction => ({
   payload: adminData,
 });
 
-// Import necessary dependencies
 
 export const logoutAdmin = (): AnyAction => {
-  localStorage.removeItem('AdminToken');
+  localStorage.removeItem('adminInfo');
 
   return {
     type: CLEAR_ADMIN_DATA,

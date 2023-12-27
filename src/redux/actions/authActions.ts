@@ -54,7 +54,7 @@ export const loginUser = (email: string, password: string) => async (dispatch: D
 
 
 export const logoutUser = (): AnyAction => {
-  localStorage.removeItem('UserToken');
+  localStorage.removeItem('UserData');
 
   return {
     type: CLEAR_USER_DATA,

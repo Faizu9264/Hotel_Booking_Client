@@ -1,13 +1,11 @@
 
-
-
-
 // userApi.ts
 import createAxiosInstance from './axiosConfig';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-// import jwt from 'jsonwebtoken';
 const API_BASE_URL = 'http://localhost:5000/user';
 const axiosInstance = createAxiosInstance(API_BASE_URL, 'UserToken');
+import { loadStripe } from '@stripe/stripe-js';
+const STRIPE_PUBLIC_KEY="pk_test_51KYOjRSGBm9hWwM9OFhr3jY63AJxZS8CFzuaEOZ8YCdnXKZeRqJEWSps12gWkTmWT1KRmKGEmx03Wqj2SuimWCgu00a6M9XbhQ"
+import { BookingDetails } from '../pages/Booking/BookingPage';
 
 let userData: any = {};
 
@@ -88,7 +86,7 @@ const api = {
       const response = await axiosInstance.post('/google-login', {_id, email, username,profileImage, token, isGoogle });
       const accessToken = response.data.accessToken;
       localStorage.setItem('UserToken', accessToken);
-
+      
       return response.data;
     } catch (error: any) {
       throw new Error(error.message);
@@ -158,6 +156,61 @@ const api = {
     }
   },
 
-};
+   handleBooking : async (userId: string, bookingDetails: Partial<BookingDetails>) => {
+    try {
+      const stripe = await loadStripe(STRIPE_PUBLIC_KEY);
+    
+      if (!stripe) {
+        console.error('Failed to load Stripe.');
+        throw new Error('Failed to load Stripe.');
+      }
+  
+    
+      const currency = 'INR';
+
+      const sessionResponse = await axiosInstance.post('/checkout', {
+        bookingDetails, currency,userId
+      });
+  
+      const sessionData = sessionResponse.data;
+  
+      const onSuccess = async () => {
+        if (sessionData && sessionData.sessionId) {
+          const result = await stripe.redirectToCheckout({
+            sessionId: sessionData.sessionId,
+          });   
+          if (result?.error) {         
+            const msg = result.error.message;
+            console.error(msg);
+          } 
+        }
+      };
+
+      onSuccess();
+    } catch (error:any) {
+      console.error('Error handling booking:', error.message);
+      throw new Error(error.message);
+    }
+  },
+
+  getBookingsByUserId: async (userId: string): Promise<any> => {
+    try {
+      console.log('Attempting to fetch rooms...');
+      const response = await axiosInstance.get(`/bookings/${userId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+      const Bookings = response.data;
+      console.log('Booking Response:', Bookings);
+      return Bookings;
+    } catch (error: any) {
+      console.error('Error fetching rooms:', error.message);
+      throw new Error(error.message);
+    }
+  },
+}
+
 
 export default api;

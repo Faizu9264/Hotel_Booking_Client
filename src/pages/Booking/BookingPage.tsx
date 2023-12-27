@@ -20,14 +20,15 @@ import EventIcon from '@mui/icons-material/Event';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setBookingDetails } from '../../redux/slices/bookingSlice';
+import { RootState } from '../../redux/store';
+
 import { useSelector } from 'react-redux';
 import { selectBookingDetails } from '../../redux/slices/bookingSlice';
 import { toast,ToastContainer } from 'react-toastify';
 import Divider from '@mui/material/Divider';
+import api from '../../services/userApi';
 
-
-
-interface BookingDetails{
+export interface BookingDetails{
     guestName: string;
     email: string;
     phone: string;
@@ -63,6 +64,10 @@ const BookingPage = () => {
   const [specialRequests, setSpecialRequests] = useState('');
   const bookingDetails = useSelector(selectBookingDetails);
   const [datePickerVisible, setDatePickerVisible] = useState(false);
+  const [guestNameError, setGuestNameError] = useState('');
+const [emailError, setEmailError] = useState('');
+const [phoneError, setPhoneError] = useState('');
+const userData = useSelector((state: RootState) => state.auth.user);
 
  
   const [BookingDetails, setBookingDetails] = useState<BookingDetails>({
@@ -148,52 +153,6 @@ const BookingPage = () => {
     }));
   };
   
-
-  // useEffect(() => {
-  //   const totalCount = BookingDetails.adultCount + BookingDetails.childrenCount;  
-  //   const nights = differenceInDays(BookingDetails.checkOutDate, BookingDetails.checkInDate);
-  //   const calculatedNightCount = nights > 0 ? nights+1 : 1; 
-
-  //   setBookingDetails((prevState) => ({
-  //     ...prevState,
-  //     nightCount: calculatedNightCount,
-  //   }));
-
-  //   if (BookingDetails.roomCount > BookingDetails.roomDetails.roomsCount) {
-  //     return;
-  //   }
-
-  //   const updatedRoomCount = Math.ceil(totalCount / BookingDetails.roomDetails.maxPeople);
-  //   const updatedMaxPeopleValue = updatedRoomCount * BookingDetails.roomDetails.maxPeople;
-
-  //   if (totalCount > updatedMaxPeopleValue) {
-      
-  //     setBookingDetails((prevState) => ({
-  //       ...prevState,
-  //       roomCount: updatedRoomCount + 1,
-  //       maxPeople: updatedMaxPeopleValue,
-  //     }));
-  //   } else {
-      
-  //     setBookingDetails((prevState) => ({
-  //       ...prevState,
-  //       roomCount: updatedRoomCount,
-  //       maxPeople: updatedMaxPeopleValue,
-  //     }));
-  //   }
-
-  //   const totalRent = updatedRoomCount * BookingDetails.roomDetails.rentAmount * calculatedNightCount;
-  //   const totalDiscount = updatedRoomCount * BookingDetails.roomDetails.discountPrice * calculatedNightCount;
-
-  //   setTotalRent(totalRent);
-  //   setTotalDiscount(totalDiscount);
-
-  //   setBookingDetails((prevState) => ({
-  //     ...prevState,
-  //     total: totalRent - totalDiscount,
-  //     discountPrice: totalDiscount,
-  //   }));
-  // }, [BookingDetails.adultCount, BookingDetails.childrenCount, bookingDetails, BookingDetails.checkInDate, bookingDetails.checkOutDate]);
 
 
 
@@ -308,20 +267,38 @@ const BookingPage = () => {
     setDatePickerVisible(!datePickerVisible);
   };
 
-  const handleBookNow = () => {
+  const handleBookNow = async () => {
+    try {
+      const userId = userData._id||userData.userId;
+      console.log('userId',userId);
+      
+      if (!guestName || !email || !phone) {
+        if (!guestName) setGuestNameError('Guest Name is required');
+        if (!email) setEmailError('Email is required');
+        if (!phone) setPhoneError('Phone is required');
+        toast.error('Please fill in all required fields.');
+        return;
+      }
+      const updatedBookingDetails: Partial<BookingDetails> = {
+        ...BookingDetails,
+        guestName: guestName, 
+        email: email, 
+        phone: phone,
+        specialRequests: specialRequests,
+      };
+      
+      setBookingDetails(updatedBookingDetails as BookingDetails);
+      await api.handleBooking(userId, updatedBookingDetails);
+      localStorage.setItem('bookingDetails', JSON.stringify(updatedBookingDetails));
+      localStorage.setItem('userId', userId);
+      
+    } catch (error:any) {
+      console.error('Error handling booking:', error.message);
   
-    const updatedBookingDetails: Partial<BookingDetails> = {
-      ...BookingDetails,
-      total: BookingDetails.roomDetails.rentAmount ,
-      discountPrice: BookingDetails.roomDetails.discountPrice ,
-      roomCount: BookingDetails.roomDetails.roomsCount,
-    };
-
-    setBookingDetails(updatedBookingDetails as BookingDetails);
-  
-
-    // navigate('/booking-confirmation');
+    }
   };
+    // navigate('/booking-confirmation');
+  
 
  
 
@@ -354,29 +331,45 @@ const BookingPage = () => {
           {/* Left Column - User Details */}
           <Grid item xs={12} md={6}>
             <Stack spacing={2} mt={2} mb={4}>
-              <TextField
-                label="Guest Name"
-                variant="outlined"
-                fullWidth
-                value={guestName}
-                onChange={(e) => setGuestName(e.target.value)}
-              />
-              <TextField
-                label="Email"
-                type="email"
-                variant="outlined"
-                fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <TextField
-                label="Phone"
-                type="tel"
-                variant="outlined"
-                fullWidth
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
+            <TextField
+  label="Guest Name"
+  variant="outlined"
+  fullWidth
+  value={guestName}
+  onChange={(e) => {
+    setGuestName(e.target.value);
+    setGuestNameError('');
+  }}
+  error={!!guestNameError}
+  helperText={guestNameError}
+/>
+<TextField
+  label="Email"
+  type="email"
+  variant="outlined"
+  fullWidth
+  value={email}
+  onChange={(e) => {
+    setEmail(e.target.value);
+    setEmailError('');
+  }}
+  error={!!emailError}
+  helperText={emailError}
+/>
+<TextField
+  label="Phone"
+  type="tel"
+  variant="outlined"
+  fullWidth
+  value={phone}
+  onChange={(e) => {
+    setPhone(e.target.value);
+    setPhoneError('');
+  }}
+  error={!!phoneError}
+  helperText={phoneError}
+/>
+
               <TextField
                 label="Special Requests"
                 multiline
@@ -456,16 +449,20 @@ const BookingPage = () => {
           <strong>Room Left:</strong> {BookingDetails.roomDetails.roomsCount}
         </Typography>
         <Typography variant="body1">
+          <strong>Room Count:</strong> {BookingDetails.roomCount}
+        </Typography>
+        <Typography variant="body1">
           <strong>Total Discount:</strong> &#x20b9;{BookingDetails.discountPrice}
         </Typography>
         <Typography variant="body1">
           <strong>Total Rent:</strong> &#x20b9;{BookingDetails.total}
         </Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} >
   <TextField
     label="Room Count"
     type="number"
     variant="outlined"
+    sx={{marginTop:'10px'}}
     value={BookingDetails.roomCount}
   />
   <Button

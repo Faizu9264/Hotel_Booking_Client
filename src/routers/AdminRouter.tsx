@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { setAdminData, setAdminLoginStatus } from '../redux/actions/adminActions';
 import Addlocation from '../components/admin/components/location/AddLocation'
 import UserListingTable from '../components/admin/components/Users/userListing';
+import BookingListingTable from '../components/admin/components/Bookings/BookingListingTable';
 
 const AdminRouter: React.FC = () => {
   const isAdminLoggedIn = useSelector((state: RootState) => state.admin.isAdminLoggedIn);
@@ -38,6 +39,7 @@ const AdminRouter: React.FC = () => {
       <Route path="hotels" element={<HotelListingTable/>}/>
       <Route path="users" element={<UserListingTable />} />
      <Route path="addHotel" element={<Addlocation/>} />
+     <Route path="bookings" element={<BookingListingTable/>} />
       {/* <Route path="editHotel" element={<Navigate to="/admin/dashboard" />} /> */}
      <Route path="editHotel/:hotelId" element={<Addlocation />} />
      <Route path="*" element={<Navigate to="/admin/dashboard" />} />

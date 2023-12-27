@@ -154,31 +154,29 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
           toast.error('Invalid email format.');
           return;
         }
-        let imageUrl = editedData.profileImage;
+     
   
         if (imageFile) {
           const imagePath = `profileImages/${editedData.userId}/${imageFile.name}`;
-          imageUrl = await uploadFile(imageFile, imagePath);
-          console.log('imageUrl', imageUrl);
-          setEditedData({...editedData,profileImage:imageUrl})
-        
+          const imageUrl = await uploadFile(imageFile, imagePath);
+  
+          setEditedData((prevData) => ({
+            ...prevData,
+            profileImage: imageUrl,
+          }));
+  
           if (imageUrl) {
-            setEditedData((prevData) => ({
-              ...prevData,
-              profileImage: imageUrl,
-            }));
-            console.log('editedData.profileImage', imageUrl);
+           const updatedUserData = await api.updateUserProfile(editedData.userId, { ...editedData, profileImage: imageUrl });
+           if (updatedUserData) {
+            dispatch(setUserData(updatedUserData));
           }
+          }
+        } else {
+         const updatedUserData = await api.updateUserProfile(editedData.userId, { ...editedData });
+         if (updatedUserData) {
+          dispatch(setUserData(updatedUserData));
         }
-        
-  
-        const updatedUserData = await api.updateUserProfile(editedData.userId, { ...editedData });
-  
-        dispatch(setUserData(updatedUserData));
-        // onClose();
-  
-        console.log('editedData2 ', editedData);
-        console.log('userData2', userData);
+        }
       }
 
       if (isChangingPassword) {

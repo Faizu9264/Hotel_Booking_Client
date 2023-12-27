@@ -35,19 +35,21 @@ const AdminLogin = () => {
       }
 
       const admin = await api.adminLogin(email, password);
-      dispatch(setAdminData({ email, ...admin }));
-      if(admin){
-        dispatch(setAdminLoginStatus(true));
-       
-  const isAdminLoggedInFromLocalStorage = localStorage.getItem('adminData') !== null;
-
-  dispatch(setAdminLoginStatus(isAdminLoggedInFromLocalStorage));
-  
-      }
-      localStorage.setItem('adminData', JSON.stringify({ email, ...admin }));
+      const AdminDetails = admin.admin
+      console.log('admin,',AdminDetails)
+      dispatch(setAdminData(AdminDetails));
+   
       if (admin.message === 'Admin login successful') {
         toast.success('Admin login successful');
         navigate('/admin/dashboard');
+        localStorage.setItem('adminData', JSON.stringify(AdminDetails ));
+      }   if(admin){
+        dispatch(setAdminLoginStatus(true));
+       
+       const isAdminLoggedInFromLocalStorage = localStorage.getItem('adminData') !== null;
+
+      dispatch(setAdminLoginStatus(isAdminLoggedInFromLocalStorage));
+  
       } else {
         toast.error('Invalid admin credentials. Please try again.');
       }

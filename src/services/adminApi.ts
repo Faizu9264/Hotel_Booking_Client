@@ -4,6 +4,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import createAxiosInstance from './axiosConfig';
 import { setHotels } from '../redux/slices/hotelSlice'
 import { setRooms } from '../redux/slices/roomSlice';
+import { addBooking } from '../redux/slices/AllBookingsSlice';
 const ADMIN_API_BASE_URL = 'http://localhost:5000/admin';
 const axiosInstance = createAxiosInstance(ADMIN_API_BASE_URL, 'AdminToken');
 import { setAllUsers,blockUser,unblockUser } from '../redux/actions/authActions';
@@ -217,7 +218,23 @@ const adminApi = {
       throw new Error(error.message);
     }
   },
+  getAllBookings : createAsyncThunk('bookings/getAllBookings', async (_, { dispatch }) => {
+    try {
+      const response = await axiosInstance.get(`${ADMIN_API_BASE_URL}/bookings/allBookings`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
   
+      const bookings = response.data;
+      console.log('bookingss',bookings)
+      dispatch(addBooking(bookings));
+      return bookings;
+    } catch (error:any) {
+      throw new Error(error.message);
+    }
+  })
   
 };
 

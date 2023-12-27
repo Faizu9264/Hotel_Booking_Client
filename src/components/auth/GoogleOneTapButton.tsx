@@ -8,6 +8,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/userApi';
 // import 'google-accounts';
+import {  useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+
+
 
 declare global {
   interface Window {
@@ -27,6 +31,7 @@ const GoogleOneTapButton: React.FC = () => {
   const [disable, setDisabled] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const navigate = useNavigate();
+  const userData = useSelector((state: RootState) => state.auth.user);
 
   const initializeGoogleOneTap = () => {
     console.log('Initializing Google One Tap...');
@@ -44,24 +49,33 @@ const handleResponse = async (response: any) => {
     try {
       const token = response.credential;
       const decodedToken: DecodedToken = jwtDecode(token);
-      console.log('Decoded Token:', decodedToken);
   
       const {sub, email, given_name: username, picture: profileImage } = decodedToken;
       const _id = sub;
-      dispatch(setUserData({_id, email, username, profileImage, token, isGoogle: true }));
-      console.log('User Details:', { email, username, profileImage,token });
+     
+    
   
       localStorage.setItem('userData', JSON.stringify({_id, email, username, profileImage, token, isGoogle: true }));
       const apiResponse = await api.googleLogin(_id,email, username,profileImage,token, true);
-  
-      if (apiResponse.message === 'Login successful') {
-        toast.success('Login successful');
-        navigate('/');
-      } else if (apiResponse.message === 'Signup successful') {
-        toast.success('Signup successful');
-        navigate('/');
-      } else {
-        toast.error('Unexpected response from the server');
+      console.log('apiResponse',apiResponse.user);
+      if(apiResponse){
+        dispatch(setUserData(apiResponse.user));
+      }
+      console.log('userData:',userData);
+
+      if(userData?.blocked){
+        toast.error('Your account hasbeen blocked');
+        navigate('/login'); 
+      }else{
+        if (apiResponse.message === 'Login successful') {
+          toast.success('Login successful');
+          navigate('/');
+        } else if (apiResponse.message === 'Signup successful') {
+          toast.success('Signup successful');
+          navigate('/');
+        } else {
+          toast.error('Unexpected response from the server');
+        }
       }
     } catch (error:any) {
       console.error('Error during Google One Tap login:', error);

@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { UserData } from "../../types/authTypes";
 import { Link } from "react-router-dom";
@@ -12,6 +12,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoginStatus } from '../../redux/actions/authActions';
 import { setUserData } from "../../redux/actions/authActions";
 import UserProfileModal from '../user/UserProfileModal';
+import { Socket,io } from "socket.io-client";
+import api from '../../services/userApi';
+import { setHotels } from '../../redux/slices/hotelSlice';
 
 const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -19,6 +22,9 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const userData = useSelector((state: RootState) => state.auth.user);
+  const hotels = useSelector((state: RootState) => state.hotel.hotels);
+  const navigate = useNavigate();
 
 
   const handleOpenProfileModal = () => {
@@ -28,7 +34,6 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const handleCloseProfileModal = () => {
     setProfileModalOpen(false);
   };
-
   useEffect(() => {
     const fetchData = async () => {
       const isUserLoggedInFromLocalStorage = localStorage.getItem('userData') !== null;
@@ -41,10 +46,28 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
     };
 
     fetchData();
-  }, []);
+  },[]);
+  
+  const socket = useRef<Socket|null>()
+  useEffect(()=>{ 
+    if(!socket.current && userData){ 
+      socket.current = io('http://localhost:5000'); 
+      socket.current.emit('addUser',(userData?.userId)) 
+      socket.current.on('getUser',(data)=>{ 
+        console.log(data); 
+      }) 
+      socket.current.on('responseIsBlocked',(data:{blocked:boolean})=>{ 
+        console.log('dataSocket',data); 
+        if(data.blocked){ 
+         dispatch(logoutUser()); 
+        } 
+      }) 
+       
+    } 
+  },[socket,userData])
 
-  const userData = useSelector((state: RootState) => state.auth.user);
-  const navigate = useNavigate();
+
+
 
   const handleLogout = () => {
     localStorage.removeItem('userData')
@@ -59,7 +82,15 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
     navigate('/user/login')
   };
 
-
+  const handleViewHotels = async() => {
+    console.log('hotels.length',hotels.length);
+    
+    if(hotels.length<=0){
+        const response = await api.getAllHotels();
+        dispatch(setHotels(response as any));
+    }
+    navigate('/user/view-hotels');
+  };
   const handleSignupButtonClick = () => {
     navigate('/user/signup')
   };
@@ -85,6 +116,7 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
             </NavLink>
             <NavLink
               to="/user/view-hotels"
+              onClick={handleViewHotels} 
               className={`text-white hover:text-gray-300 transition duration-300 ${
                 window.location.pathname === "/user/view-hotels"
                   ? "border-b-2 border-white"
@@ -208,7 +240,7 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-blue-500">
+        <div className="md:hidden ">
           <div className="container mx-auto py-2">
             <NavLink
               to="/"

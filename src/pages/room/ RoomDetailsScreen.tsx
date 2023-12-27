@@ -47,9 +47,9 @@ const amenityIcons: Record<string, JSX.Element> = {
 const RoomDetailsScreen = () => {
   const selected: Room = useSelector((state: RootState) => state.room.roomDetails.selectedRoom);
   const room = selected
-  console.log('room',room);
   
   const roomId = new URLSearchParams(window.location.search).get('roomId') ?? '';
+  
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const handleClose = () => {
@@ -62,6 +62,7 @@ const RoomDetailsScreen = () => {
         setBookingDetails({
           roomDetails: {
             ...room,
+            id:roomId,
             hotelId: room?.hotelId ?? '', 
           },
         })

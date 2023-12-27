@@ -1,6 +1,6 @@
 //userListingTable.tsx;
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, IconButton, Tooltip, Typography } from "@material-tailwind/react";
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { RootState } from '../../../../redux/store';
 import adminApi from '../../../../services/adminApi';
 import { Dispatch } from 'redux';
 import { FaEdit, FaBan, FaCheckCircle } from 'react-icons/fa';
+import { Socket,io } from 'socket.io-client';
 // import { UserData } from '../../../../types/authTypes';
 
 
@@ -39,9 +40,20 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
       user.username.toLowerCase().includes(searchUsername.toLowerCase()) &&
       user.email.toLowerCase().includes(searchEmail.toLowerCase())
   );
-
+  const currentAdminString:any = localStorage.getItem('adminInfo');
+  // console.log('currentAdmin ',currentAdmin );
+  const currentAdmin = JSON.parse(currentAdminString);
+  
   const pageSize: number = 3;
   const navigate = useNavigate();
+  const socket = useRef<Socket| null>(); 
+ 
+  useEffect(()=>{ 
+    if(!socket.current && currentAdmin){ 
+      socket.current = io('http://localhost:5000') 
+      socket.current.emit('addUser',(currentAdmin?._id)) 
+    } 
+  },[socket, currentAdmin])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,6 +81,10 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
       try {
         console.log('users',users)
         await dispatch(adminApi.blockUser(userId));
+        if(socket.current){
+          socket.current.emit('join-room',userId)
+          socket.current.emit('blocked',{userId:userId})
+        }
       } catch (error) {
         console.error('Error blocking user:', error);
       }
@@ -86,23 +102,6 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
     }
   };
   
-
-  // const handleEditUserClick = (userId?: string): void => {
-  //   console.log('users', users);
-  //   console.log('userId', userId);
-  //   if (userId) {
-  //     const selectedUser: UserData | undefined = users.find((user) => user._id === userId);
-  //     if (selectedUser) {
-  //       setSelectedUserDetails(selectedUser);
-  //       navigate(`/admin/dashboard/editUser?userId=${userId}`);
-  //     } else {
-  //       console.error(`User with ID ${userId} not found`);
-  //     }
-  //   }
-  // };
-  
-  
-
 
 
   return (

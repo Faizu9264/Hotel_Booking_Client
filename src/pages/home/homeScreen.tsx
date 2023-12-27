@@ -4,8 +4,6 @@ import { Box, Button, TextField } from '@mui/material';
 import { CorporateFare, LockTwoTone, TravelExplore } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
-// import { AppDispatch } from '../../../store/store';
-// import { getHotels } from '../../../actions/hotel';
 import RoomListScreen from '../room/RoomListinig';
 import MapScreen from '../map/ClusterMap';
 import HotelListScreen from '../hotel/HotelListScreen';
@@ -15,6 +13,9 @@ import { setHotels } from '../../redux/slices/hotelSlice';
 import { RootState } from '../../redux/store';
 import UserProfileModal from '../../components/user/UserProfileModal';
 import BookingPage from '../Booking/BookingPage'; 
+import PaymentSuccess from '../../components/payment/PaymentSuccess'
+import PaymentFailure from '../../components/payment/PaymentFailure';
+import MyBookings from '../../components/user/MyBookings';
 
 interface HomeScreenProps {
   handleOpenProfileModal: () => void;
@@ -76,6 +77,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ handleOpenProfileModal }) => {
       ) : 
       location.pathname.startsWith('/user/checkout') ? (
         <BookingPage/> 
+      ): 
+      location.pathname.startsWith('/user/payment/success') ? (
+        <PaymentSuccess/> 
+      ): 
+      location.pathname.startsWith('/user/payment/failed') ? (
+        <PaymentFailure /> 
+      ) : 
+      location.pathname.startsWith('/user/bookings') ? (
+        <MyBookings /> 
       ) : 
       (
         <Box sx={{ position: 'relative' }}>

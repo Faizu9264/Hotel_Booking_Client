@@ -10,7 +10,7 @@ import { RootState } from '../redux/store';
 import { useDispatch } from "react-redux";
 import UserProfileModal from '../components/user/UserProfileModal';
 import { setLoginStatus } from '../redux/actions/authActions';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -19,13 +19,15 @@ const UserRouter: React.FC = () => {
     const [isProfileModalOpen, setProfileModalOpen] = useState(false);
     const dispatch = useDispatch();
     const isUserLoggedInFromLocalStorage = localStorage.getItem('userData') !== null;
-  
+    const userData = useSelector((state: RootState) => state.auth.user);
+    
     useEffect(() => {
       dispatch(setLoginStatus(isUserLoggedInFromLocalStorage));
     }, [dispatch, isUserLoggedInFromLocalStorage]);
-  
+   
     const isUserLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-    const userData = useSelector((state: RootState) => state.auth.user);
+    console.log('userData',userData);
+    
     const openOTPModal = () => {
       setOTModalOpen(true);
     };
@@ -55,9 +57,12 @@ const UserRouter: React.FC = () => {
         <Route path="view-rooms" element={<Home />} />
         <Route path="room-details" element={<Home />} />
         <Route path="checkout" element={<Home />} />
-
+        <Route path="payment/success" element={<Home/>} />
+       <Route path="payment/failed" element={<Home />} />
+       <Route path="bookings" element={<Home />} />
       </Routes>
     );
-  };
+  }
+  
   
   export default UserRouter;

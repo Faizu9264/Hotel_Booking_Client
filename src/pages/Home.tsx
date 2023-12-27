@@ -6,16 +6,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import  {RootState}  from '../redux/store';
 import MapScreen  from '../pages/map/ClusterMap'
 import HomeScreen from './home/homeScreen';
-import api from '../services/userApi';
 import { setHotels } from '../redux/slices/hotelSlice';
 import Footer from '../components/common/Footer'
+import useCheckToken from '../services/tokenUtils';
+
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.auth.user);
   const [isProfileModalOpen, setProfileModalOpen] = useState(false);
-
+    // useCheckToken()
+ 
   const handleOpenProfileModal = () => {
     setProfileModalOpen(true);
   };
