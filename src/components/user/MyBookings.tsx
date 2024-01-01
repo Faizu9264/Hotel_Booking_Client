@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
@@ -21,8 +22,13 @@ import {
 } from '@mui/material';
 import api from '../../services/userApi';
 import { RootState } from '../../redux/store';
-import { useSelector } from 'react-redux';
 import LoadingSpinner from '../common/LoadingSpinner';
+import './MyBookings.css'
+import { styled } from '@mui/system';
+import Swal from 'sweetalert2'
+import { useDispatch, useSelector } from 'react-redux';
+import { Dispatch } from 'redux';
+
 
 interface Booking {
   _id: string;
@@ -40,7 +46,7 @@ interface Booking {
   total: number;
   discountPrice: number;
   paymentStatus: string;
-  BookingStatus:string;
+  BookingStatus: string;
   RoomId: {
     id: string;
     roomType: string;
@@ -56,18 +62,73 @@ interface Booking {
   };
 }
 
+const FlipContainer = styled('div')({
+  perspective: '1000px',
+  marginBottom: '20px',
+});
+
+const Flipper = styled('div')<{ isFlipped: boolean }>((props) => ({
+  transformStyle: 'preserve-3d',
+  transition: 'transform 1s ease-in-out',
+  height: '100%',
+  transform: props.isFlipped ? 'rotateY(180deg)' : 'none',
+}));
+
+
+const Front = styled('div')({
+  backfaceVisibility: 'hidden',
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  width: '100%',
+  height: '100%',
+  zIndex: 1,
+});
+
+const Back = styled('div')({
+  backfaceVisibility: 'hidden',
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  width: '100%',
+  height: '100%',
+  transform: 'rotateY(180deg)',
+  zIndex: 0,
+})
+
+interface TableContainerProps {
+  component?: React.ElementType;
+}
+
+const TableContainerStyled = styled(TableContainer)<TableContainerProps>(({ theme }) => ({
+  position: 'relative',
+}));
+
+
 const MyBookings: React.FC = () => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+ 
+  const [completedBookings, setCompletedBookings] = useState<Booking[]>([]);
+  const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [activeTable, setActiveTable] = useState<'completed' | 'upcoming'>('upcoming');
   const userData = useSelector((state: RootState) => state.auth.user);
   const [imageLoaded, setImageLoaded] = useState(false);
-
+  const dispatch: Dispatch<any> = useDispatch();
   const fetchData = async () => {
     try {
       const userId = String(userData._id || userData.userId);
       const response = await api.getBookingsByUserId(userId);
-      console.log('response123', response);
-      setBookings(response);
+      const today = new Date();
+
+      const completed = response.filter(
+        (booking: any) => new Date(booking.checkOutDate) < today
+      );
+      const upcoming = response.filter(
+        (booking: any) => new Date(booking.checkOutDate) >= today
+      );
+
+      setCompletedBookings(completed);
+      setUpcomingBookings(upcoming);
     } catch (error: any) {
       console.error('Error fetching bookings:', error.message);
     }
@@ -85,6 +146,166 @@ const MyBookings: React.FC = () => {
     setSelectedBooking(null);
   };
 
+  const toggleTable = () => {
+    setActiveTable((prevTable) => (prevTable === 'completed' ? 'upcoming' : 'completed'));
+  };
+
+  const renderTable = () => {
+    if (activeTable === 'completed') {
+      return renderCompletedBookingsTable();
+    } else {
+      return renderUpcomingBookingsTable();
+    }
+  };
+
+  const handleCancelBookingClick = async (bookingId?: string): Promise<void> => {
+    if (bookingId) {
+      showCancelConfirmationDialog(bookingId);
+    }
+  };
+  const showCancelConfirmationDialog = (bookingId: string) => {
+    Swal.fire({
+      title: 'Confirm Cancellation',
+      text: 'Are you sure you want to cancel this booking?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!',
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        CancelBooking(bookingId);
+      }
+    });
+  };
+  const CancelBooking = async (bookingId: string) => {
+    try {
+      console.log('inscide cancel',bookingId);
+      
+      // Make an API call to cancel the booking
+      await dispatch(api.cancelBooking(bookingId));
+
+      // Show success message
+      Swal.fire({
+        title: 'Cancelled!',
+        text: 'The booking has been cancelled.',
+        icon: 'success',
+      });
+      fetchData();
+    } catch (error: any) {
+      console.error('Error canceling booking:', error.message);
+    }
+  };
+
+  const getStatusBadgeColor = (status: string): string => {
+    switch (status) {
+      case 'confirmed':
+        return 'green';
+        case 'success':
+          return 'green';
+          case 'failed':
+          return 'red';
+      case 'pending':
+        return 'orange';
+      case 'canceled by admin':
+        return 'red';
+        case 'canceled by user':
+          return 'red';
+      case 'approved by admin':
+        return 'blue';
+      default:
+        return 'gray';
+    }
+  };
+  const renderUpcomingBookingsTable = () => (
+    <FlipContainer className={`${activeTable}`}>
+   <Flipper isFlipped={activeTable === 'completed'}>
+      <Front>
+      <TableContainerStyled component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ color: 'blue' }}>Hotel Name</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Room Type</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Check-In Date</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Check-Out Date</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Total</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Payment Status</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Booking Status</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {upcomingBookings.map((booking: any) => (
+            <TableRow key={booking._id}>
+              <TableCell>{booking.RoomId.hotelName}</TableCell>
+              <TableCell>{booking.RoomId.roomType}</TableCell>
+              <TableCell>{formatDate(booking.checkInDate)}</TableCell>
+              <TableCell>{formatDate(booking.checkOutDate)}</TableCell>
+              <TableCell>{formatCurrency(booking.total)}</TableCell>
+              <TableCell sx={{ color: 'green' }}>{booking.paymentStatus}</TableCell>
+              <TableCell style={{ color: getStatusBadgeColor(booking?.BookingStatus) }}>{booking.BookingStatus}</TableCell>
+              <TableCell>
+                <Button onClick={() => handleViewDetails(booking)}>View</Button>
+                {isUpcomingBooking(booking) &&
+                  booking.BookingStatus !== 'canceled by user' &&
+                  booking.BookingStatus !== 'canceled by admin' && (
+                    <Button sx={{ color: 'red' }} onClick={() => handleCancelBookingClick(booking._id)}>
+                      Cancel
+                    </Button> 
+                  )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      </TableContainerStyled>
+      </Front>
+      </Flipper>
+    </FlipContainer>
+  );
+
+  const renderCompletedBookingsTable = () => (
+    <FlipContainer>
+  <Flipper isFlipped={activeTable === 'completed'}>
+    <Back>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ color: 'blue' }}>Hotel Name</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Room Type</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Check-In Date</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Check-Out Date</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Total</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Payment Status</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Booking Status</TableCell>
+            <TableCell sx={{ color: 'blue' }}>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {completedBookings.map((booking: any) => (
+            <TableRow key={booking._id}>
+              <TableCell>{booking.RoomId.hotelName}</TableCell>
+              <TableCell>{booking.RoomId.roomType}</TableCell>
+              <TableCell>{formatDate(booking.checkInDate)}</TableCell>
+              <TableCell>{formatDate(booking.checkOutDate)}</TableCell>
+              <TableCell>{formatCurrency(booking.total)}</TableCell>
+              <TableCell sx={{ color: 'green' }}>{booking.paymentStatus}</TableCell>
+              <TableCell style={{ color: getStatusBadgeColor(booking?.BookingStatus) }}>{booking.BookingStatus}</TableCell>
+              <TableCell>
+                <Button onClick={() => handleViewDetails(booking)}>View</Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    </Back>
+      </Flipper>
+    </FlipContainer>
+  );
+
   const formatDate = (dateString: Date | '') => {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
@@ -100,42 +321,52 @@ const MyBookings: React.FC = () => {
     }).format(amount);
   };
 
+
+  const isUpcomingBooking = (booking: Booking): boolean => {
+    const today = new Date();
+    const checkOutDate = new Date(booking.checkOutDate);
+    return checkOutDate >= today;
+  };
+
   return (
-    <Container sx={{ minHeight: '280px' }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        My Bookings
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Hotel Name</TableCell>
-              <TableCell>Room Type</TableCell>
-              <TableCell>Check-In Date</TableCell>
-              <TableCell>Check-Out Date</TableCell>
-              <TableCell>Total</TableCell>
-              <TableCell sx={{ color: 'green' }}>Payment Status</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {bookings &&
-              bookings?.map((booking: any) => (
-                <TableRow key={booking._id}>
-                  <TableCell>{booking.RoomId.hotelName}</TableCell>
-                  <TableCell>{booking.RoomId.roomType}</TableCell>
-                  <TableCell>{formatDate(booking.checkInDate)}</TableCell>
-                  <TableCell>{formatDate(booking.checkOutDate)}</TableCell>
-                  <TableCell>{formatCurrency(booking.total)}</TableCell>
-                  <TableCell sx={{ color: 'green' }}>{booking.paymentStatus}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleViewDetails(booking)}>View</Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <Container sx={{ minHeight: '400px', }} className="">
+    <Typography variant="h4" align="center" gutterBottom>
+      My Bookings
+    </Typography>
+    <div className="table-headings">
+  <Typography
+    variant="h5"
+    sx={{
+      textAlign: 'center',
+      cursor: 'pointer',
+      color: activeTable === 'completed' ? 'black' : 'blue',
+      fontSize: activeTable === 'completed' ? '1.5rem' : '1rem',
+    }}
+    onClick={activeTable === 'completed' ? undefined : toggleTable}
+    className={`table-heading ${activeTable === 'completed' ? 'disabled' : ''}`}
+    gutterBottom
+  >
+    Completed Bookings {activeTable === 'upcoming' && '➤'}
+  </Typography>
+  <Typography
+    variant="h5"
+    sx={{
+      textAlign: 'center',
+      cursor: 'pointer',
+      color: activeTable === 'upcoming' ? 'black' : 'blue',
+      fontSize: activeTable === 'upcoming' ? '1.5rem' : '1rem',
+    }}
+    onClick={activeTable === 'upcoming' ? undefined : toggleTable}
+    className={`table-heading ${activeTable === 'upcoming' ? 'disabled' : ''}`}
+    gutterBottom
+  >
+    Upcoming Bookings {activeTable === 'completed' && '➤'}
+  </Typography>
+</div>
+
+
+
+      {renderTable()}
 
       <Dialog open={!!selectedBooking} onClose={handleCloseDetails}>
         <DialogTitle>Booking Details</DialogTitle>
@@ -148,13 +379,13 @@ const MyBookings: React.FC = () => {
             </Grid>
             <Grid item xs={12} md={6}>
               <Card>
-              {!imageLoaded && <LoadingSpinner />}
-              <CardMedia
+                {!imageLoaded && <LoadingSpinner />}
+                <CardMedia
                   component="img"
                   height="140"
                   src={selectedBooking?.RoomId.images[0] || ''}
                   alt={selectedBooking?.RoomId.hotelName || ''}
-                  onLoad={() => setImageLoaded(true)} 
+                  onLoad={() => setImageLoaded(true)}
                 />
               </Card>
             </Grid>
@@ -187,7 +418,8 @@ const MyBookings: React.FC = () => {
                 <Typography variant="body1">
                   Payment Status: {selectedBooking?.paymentStatus}
                 </Typography>
-                <Typography variant="body1">
+                
+                <Typography variant="body1" >
                   Booking Status: {selectedBooking?.BookingStatus}
                 </Typography>
               </CardContent>

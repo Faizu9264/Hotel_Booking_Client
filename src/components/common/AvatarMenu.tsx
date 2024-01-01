@@ -7,6 +7,8 @@ import { logoutUser } from "../../redux/actions/authActions";
 import UserProfileModal from '../user/UserProfileModal';
 import { RootState } from '../../redux/store';
 import { useDispatch ,useSelector} from "react-redux";
+import { Search, Person, Chat, Notifications } from "@material-ui/icons";
+
 
 
 
@@ -56,6 +58,7 @@ const AvatarMenu: React.FC<{ user: UserData }> = ({ user }) => {
     <div className="relative ml-auto">
       {userData && (
         <div className="relative">
+               
           <button
             ref={profileRef}
             className="w-10 h-10 outline-none rounded-full ring-offset-2 ring-gray-200 block"

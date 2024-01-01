@@ -8,7 +8,7 @@ interface ErrorMessageProps {
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
   return (
-    <Alert severity="error">
+    <Alert severity="error" sx={{minHeight:'300PX'}}>
       <AlertTitle>Error</AlertTitle>
       {message}
     </Alert>

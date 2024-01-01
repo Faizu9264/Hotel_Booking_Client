@@ -16,7 +16,6 @@ import BookingPage from '../Booking/BookingPage';
 import PaymentSuccess from '../../components/payment/PaymentSuccess'
 import PaymentFailure from '../../components/payment/PaymentFailure';
 import MyBookings from '../../components/user/MyBookings';
-
 interface HomeScreenProps {
   handleOpenProfileModal: () => void;
 }
@@ -63,6 +62,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ handleOpenProfileModal }) => {
   };
   return (
     <>
+    
       {location.pathname === '/user/find-hotels' ? (
         <MapScreen />
       ) : location.pathname === '/user/view-hotels' ? (

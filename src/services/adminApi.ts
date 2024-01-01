@@ -234,8 +234,49 @@ const adminApi = {
     } catch (error:any) {
       throw new Error(error.message);
     }
-  })
+  }),
   
+  approveBooking: (bookingId: string) => async (dispatch: Dispatch) => {
+    try {
+      const response = await axiosInstance.patch(
+        `${ADMIN_API_BASE_URL}/approve/${bookingId}`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
+  
+      console.log('User unblocked:', response);
+  
+      // dispatch(unblockUser(userId));
+  
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+  cancelBooking: (bookingId: string) => async (dispatch: Dispatch) => {
+    try {
+      const response = await axiosInstance.patch(
+        `${ADMIN_API_BASE_URL}/cancel/${bookingId}`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
+  
+  
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
 };
 
 export default adminApi;

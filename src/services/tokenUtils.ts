@@ -12,7 +12,6 @@ const checkTokenExpiration = (token: any, logoutAction: any, navigate: any) => {
   }
 
   const decodedToken = jwtDecode(token);
-  console.log('decodedToken.exp', decodedToken.exp);
 
   if (decodedToken && decodedToken.exp) {
     if (decodedToken.exp * 1000 < new Date().getTime()) {

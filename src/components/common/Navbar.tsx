@@ -15,6 +15,8 @@ import UserProfileModal from '../user/UserProfileModal';
 import { Socket,io } from "socket.io-client";
 import api from '../../services/userApi';
 import { setHotels } from '../../redux/slices/hotelSlice';
+import { Search, Person, Chat, Notifications } from "@material-ui/icons";
+import './navbar.css'
 
 const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -83,7 +85,6 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   };
 
   const handleViewHotels = async() => {
-    console.log('hotels.length',hotels.length);
     
     if(hotels.length<=0){
         const response = await api.getAllHotels();
@@ -159,6 +160,7 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
 
           {userData && isLoggedIn ? (
             <>
+          
               <AvatarMenu user={userData} />
             </>
           ) : (
@@ -182,6 +184,7 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
         <div className="md:hidden flex items-center">
           {userData && isLoggedIn ? (
             <>
+            
               <img
                 src={userData.profileImage || "/logo/profile.png"}
                 alt="User Profile"
@@ -268,8 +271,10 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
             >
               Contact
             </NavLink>
+            
             {userData && isLoggedIn && (
               <>
+              
                 <NavLink
                   to=""
                   onClick={handleOpenProfileModal}

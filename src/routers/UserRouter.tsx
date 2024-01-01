@@ -26,7 +26,6 @@ const UserRouter: React.FC = () => {
     }, [dispatch, isUserLoggedInFromLocalStorage]);
    
     const isUserLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
-    console.log('userData',userData);
     
     const openOTPModal = () => {
       setOTModalOpen(true);
@@ -46,23 +45,32 @@ const UserRouter: React.FC = () => {
       toast.error("Your account is blocked. Please contact support.");
       return <Navigate to="/login" />;
   }
-    return (
-      <Routes>
+  return (
+    <Routes>
         <Route path="signup" element={<Signup />} />
         <Route path="login" element={<Login />} />
         <Route path="verify-otp" element={<OTPModal isOpen={otpModalOpen} onRequestClose={closeOTPModal} />} />
         <Route path="profile" element={<UserProfileModal user={userData} isOpen={isProfileModalOpen} onClose={handleCloseProfileModal} />} />
+
+        {/* Public Routes */}
         <Route path="view-hotels" element={<Home />} />
         <Route path="find-hotels" element={<Home />} />
         <Route path="view-rooms" element={<Home />} />
         <Route path="room-details" element={<Home />} />
-        <Route path="checkout" element={<Home />} />
-        <Route path="payment/success" element={<Home/>} />
-       <Route path="payment/failed" element={<Home />} />
-       <Route path="bookings" element={<Home />} />
-      </Routes>
-    );
-  }
-  
+        
+        {/* Private Routes */}
+        {isUserLoggedIn && (
+            <>
+                <Route path="checkout" element={<Home />} />
+                <Route path="payment/success" element={<Home />} />
+                <Route path="payment/failed" element={<Home />} />
+                <Route path="bookings" element={<Home />} />
+                <Route path="messenger" element={<Home />} />
+
+            </>
+        )}
+    </Routes>
+);
+}
   
   export default UserRouter;

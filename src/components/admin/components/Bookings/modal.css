@@ -1,0 +1,38 @@
+/* modal.css */
+.modal {
+  background-color: white;
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex; /* Use flexbox for a row layout */
+  flex-direction: row; /* Arrange children in a row */
+  justify-content: space-between; /* Add space between the two children */
+}
+.ReactModal__Overlay {
+    background-color: transparent !important;
+  }
+/* Optional: Style the overlay */
+.react-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Optional: Style the slider dots */
+.slick-dots li button::before {
+  color: #3498db;
+}
+
+.modal-close-btn {
+    background-color: #3498db;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+/* Optional: Add styles for the content container */
+.modal-content {
+  width: 50%; /* Set the width of the content container */
+}

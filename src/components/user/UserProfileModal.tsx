@@ -23,6 +23,7 @@ import api from '../../services/userApi';
 import { setUserData } from '../../redux/actions/authActions';
 import { ToastContainer,toast } from 'react-toastify';
 import uploadFile from '../../firebase/uploadFile';
+import { Property } from 'csstype';
 
 interface UserProfileModalProps {
   user: UserData;
@@ -62,33 +63,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
     confirmPassword: '',
     profileImage: userData?.profileImage || '',
   });
-  // useEffect(() => {
-  //   const updateUserProfile = async () => {
-  //     console.log('editedData.profileImage1', editedData);
-      
-  //     try {
-  //       if (!editedData.userId ) {
-  //         toast.error('User data or userId is missing1.');
-  //         return;
-  //       }
-        
-  
-  //       const updatedUserData = await api.updateUserProfile(userData._id, { ...editedData });
-  
-  //       dispatch(setUserData(updatedUserData));
-  //       // onClose();
-  
-  //       // console.log('editedData ', editedData);
-  //       // console.log('userData', userData);
-  //     } catch (error: any) {
-  //       toast.error('Error updating profile details:', error.message);
-  //     }
-  //   };
-  
-  //   if (editedData.userId) {
-  //     updateUserProfile();
-  //   }
-  // }, [editedData.profileImage,editedData]);
+
   
   const handleEditClick = () => {
     setIsEditing(true);
@@ -138,10 +113,8 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
 
   const handleSaveChanges = async () => {
     try {
-      console.log('editedData', editedData);
-      console.log('userData', userData);
+  
       editedData.userId = userData?._id ?? userData.userId;
-      console.log('editedData.userId', editedData.userId);
   
       if (!editedData.userId) {
         toast.error('User data or userId is missing.');
@@ -222,20 +195,22 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) 
     <Dialog open={isOpen} onClose={onClose} maxWidth="xs" fullWidth>
       <ToastContainer/>
       <DialogTitle>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Button
-            onClick={handleEditClick}
-            startIcon={<EditIcon />}
-            variant="outlined"
-            color="primary"
-            sx={{ display: isEditing || isChangingPassword ? 'none' : 'flex' }}
-          >
-            Edit Profile
-          </Button>
-          <IconButton color="inherit" onClick={onClose} aria-label="close">
-            <CloseIcon />
-          </IconButton>
-        </Box>
+      <Box sx={{ display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'}}> 
+  <Button
+    onClick={handleEditClick}
+    startIcon={<EditIcon />}
+    variant="outlined"
+    color="primary"
+    sx={{ display: isEditing || isChangingPassword ? 'none' : 'flex' }}
+  >
+    Edit Profile
+  </Button>
+  <IconButton color="inherit" onClick={onClose} aria-label="close">
+    <CloseIcon />
+  </IconButton>
+</Box>
       </DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

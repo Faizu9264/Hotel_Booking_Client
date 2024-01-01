@@ -6,6 +6,7 @@ const axiosInstance = createAxiosInstance(API_BASE_URL, 'UserToken');
 import { loadStripe } from '@stripe/stripe-js';
 const STRIPE_PUBLIC_KEY="pk_test_51KYOjRSGBm9hWwM9OFhr3jY63AJxZS8CFzuaEOZ8YCdnXKZeRqJEWSps12gWkTmWT1KRmKGEmx03Wqj2SuimWCgu00a6M9XbhQ"
 import { BookingDetails } from '../pages/Booking/BookingPage';
+import { Dispatch } from 'redux';
 
 let userData: any = {};
 
@@ -195,7 +196,6 @@ const api = {
 
   getBookingsByUserId: async (userId: string): Promise<any> => {
     try {
-      console.log('Attempting to fetch rooms...');
       const response = await axiosInstance.get(`/bookings/${userId}`, {
         headers: {
           'Content-Type': 'application/json',
@@ -203,10 +203,27 @@ const api = {
         withCredentials: true,
       });
       const Bookings = response.data;
-      console.log('Booking Response:', Bookings);
       return Bookings;
     } catch (error: any) {
-      console.error('Error fetching rooms:', error.message);
+      throw new Error(error.message);
+    }
+  },
+  cancelBooking: (bookingId: string) => async (dispatch: Dispatch) => {
+    try {
+      const response = await axiosInstance.patch(
+        `${API_BASE_URL}/cancelBooking/${bookingId}`,
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        }
+      );
+  
+  
+      return response.data;
+    } catch (error: any) {
       throw new Error(error.message);
     }
   },

@@ -30,6 +30,10 @@ import { Socket, io } from 'socket.io-client';
 import { logoutAdmin } from '../../../redux/actions/adminActions';
 import { useNavigate } from 'react-router-dom';
 import BookingListingTable from './Bookings/BookingListingTable';
+import { Dashboard } from '@mui/icons-material';
+import SupportAdmin from './Support/SupportAdmin';
+import MainDashboard from './MainDashboard'
+import AddCoupon from './Coupens/AddCoupen';
  const Sidebar: React.FC = () => {
   // useCheckToken()
 
@@ -48,8 +52,6 @@ import BookingListingTable from './Bookings/BookingListingTable';
   const currentAdminString:any = localStorage.getItem('adminData');
   const currentAdminToken:any = localStorage.getItem('AdminToken');
 
-  console.log('currentAdmin', currentAdminString);
-  console.log('currentAdminToken', currentAdminToken);
  const navigate = useNavigate()
   const currentAdmin = JSON.parse(currentAdminString);
     checkTokenExpiration(currentAdminToken, logoutAdmin, navigate);
@@ -57,7 +59,7 @@ import BookingListingTable from './Bookings/BookingListingTable';
  
   
   const Menus = [
-    { title: "Dashboard", icon: faHome, route: "/admin/dashboard/" },
+    { title: "Dashboard", icon: faHome, route: "/admin/dashboard/mainDashboard" },
     { title: "Users", icon: faUser, route: "/admin/dashboard/users" },
     { title: "Hotels", icon: faBuilding, route: "/admin/dashboard/hotels" },
     { title: "Rooms", icon: faBuilding, route: "/admin/dashboard/rooms" },
@@ -65,19 +67,14 @@ import BookingListingTable from './Bookings/BookingListingTable';
     { title: "Coupons", icon: faTag, route: "/admin/dashboard/coupons" },
     { title: "Offers", icon: faGift, route: "/admin/dashboard/offers" },
     { title: "Banners", icon: faPhotoVideo, route: "/admin/dashboard/banners" },
+    { title: "Support", icon: faPhotoVideo, route: "/admin/dashboard/Support" },
+
   ];
 
   const handleMenuClick = (title: string) => {
     setSelectedMenu(title);
   };
-  const socket = useRef<Socket| null>(); 
- 
-  useEffect(()=>{ 
-    if(!socket.current && currentAdmin){ 
-      socket.current = io('http://localhost:5000') 
-      socket.current.emit('addUser',(currentAdmin?._id)) 
-    } 
-  },[socket, currentAdmin])
+
 
 useEffect(()=>{
 
@@ -89,14 +86,14 @@ useEffect(()=>{
       dispatch({ type: 'RESET_HOTEL_STATE' });
     }
 },[url])
-  // const dispatch: Dispatch<any> = useDispatch();
+
   
   return (
-    <div className="flex">
+    <div className={`flex ${open ? 'flex' : 'hidden lg:flex'}`}>
       <div
         className={`${
-          open ? "w-70" : "w-20 "
-        } bg-black h-screen p-5  pt-8 relative duration-300`}
+          open ? 'w-70' : 'w-20'
+        } bg-black h-screen p-5 pt-8 relative duration-300`}
       >
         <FontAwesomeIcon
           icon={faArrowLeft}
@@ -142,9 +139,11 @@ useEffect(()=>{
 </ul>
 
       </div>
-      <div className="h-screen flex-1 bg-gray-300">
+      <div className="h-screen flex-1 bg-gray-300 overflow-y-auto">
   <Navbar />
-  <div className='mt-2 ml-2 mr-2 mb-2'>
+  <div className='mt-2 ml-2 mr-2 mb-2' >
+  {/* {selectedMenu === 'Dashboard' && <MainDashboard />} */} 
+  {url.pathname.startsWith( "/admin/dashboard/mainDashboard") &&<MainDashboard/>}
     {url.pathname === "/admin/dashboard/hotels" && <HotelListingTable />}
     {url.pathname === "/admin/dashboard/addHotel" && <AddHotel />}
     {url.pathname.startsWith("/admin/dashboard/editHotel/") && <AddHotel />}
@@ -155,8 +154,8 @@ useEffect(()=>{
     {(url.pathname.startsWith("/admin/dashboard/editRoom/") || url.pathname === "/admin/dashboard/editRoom") && <AddRooms />}
     {url.pathname === "/admin/dashboard/users" && <UserListingTable/>}
     {url.pathname === "/admin/dashboard/bookings" && <BookingListingTable />}
-
-
+    {url.pathname === "/admin/dashboard/Support" && <SupportAdmin/>} 
+    {url.pathname === "/admin/dashboard/coupons" && <AddCoupon/>} 
   </div>
 </div>
     </div>

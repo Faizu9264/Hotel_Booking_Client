@@ -40,9 +40,9 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
       user.username.toLowerCase().includes(searchUsername.toLowerCase()) &&
       user.email.toLowerCase().includes(searchEmail.toLowerCase())
   );
-  const currentAdminString:any = localStorage.getItem('adminInfo');
+  const currentAdmin:any = localStorage.getItem('adminData');
   // console.log('currentAdmin ',currentAdmin );
-  const currentAdmin = JSON.parse(currentAdminString);
+  // const currentAdmin = JSON.parse(currentAdminString);
   
   const pageSize: number = 3;
   const navigate = useNavigate();
@@ -59,7 +59,9 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
     const fetchData = async () => {
       try {
         
-       await dispatch(adminApi.getAllUsers());
+        if (users.length <= 0) {
+          dispatch(adminApi.getAllUsers());
+        }
      
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -79,10 +81,10 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
   const handleBlockUserClick = async (userId?: string): Promise<void> => {
     if (userId) {
       try {
-        console.log('users',users)
         await dispatch(adminApi.blockUser(userId));
+        console.log('socket.current',socket.current)
         if(socket.current){
-          socket.current.emit('join-room',userId)
+          // socket.current.emit('join-room',userId)
           socket.current.emit('blocked',{userId:userId})
         }
       } catch (error) {
@@ -105,11 +107,11 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
 
 
   return (
-    <Card className="h-full w-full overflow-hidden">
-      <CardHeader floated={false} shadow={false} className="rounded-none">
+    <Card className="h-full w-full overflow-hidden" placeholder={'card'}>
+      <CardHeader floated={false} shadow={false} className="rounded-none" placeholder={'cardHeader'}>
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
-          <Typography variant="h5" color="blue-gray" className="ml-3 mt-3">
+          <Typography variant="h5" color="blue-gray" className="ml-3 mt-3" placeholder={'typography'}>
            Manage Users
            </Typography>
           </div>
@@ -134,7 +136,7 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
           />
         </div>
       </CardHeader>
-      <CardBody className="overflow-x-auto px-0">
+      <CardBody className="overflow-x-auto px-0" placeholder={'cardBody'}>
         <table className="w-full table-auto text-left">
           <thead>
             <tr>
@@ -143,6 +145,7 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'profileImage'}
                 >
                   Profile Image
                 </Typography>
@@ -152,6 +155,7 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'username'}
                 >
                   Username
                 </Typography>
@@ -161,6 +165,7 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'email'}
                 >
                   Email
                 </Typography>
@@ -170,6 +175,7 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'phone'}
                 >
                   Phone Number
                 </Typography>
@@ -179,6 +185,7 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'action'}
                 >
                   Actions
                 </Typography>
@@ -199,20 +206,21 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
                       size="sm"
                       className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
                       style={{ width: '50px', height: '50px' }}
+                      placeholder={'username'}
                     />
                   </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-bold">
+                    <Typography variant="small" color="blue-gray" className="font-bold" placeholder={'username'}>
                       {username}
                     </Typography>
                   </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-normal">
+                    <Typography variant="small" color="blue-gray" className="font-normal" placeholder={'email'}>
                       {email}
                     </Typography>
                   </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-normal">
+                    <Typography variant="small" color="blue-gray" className="font-normal" placeholder={'phoneNumber'}>
                       {phoneNumber}
                     </Typography>
                   </td>
@@ -228,6 +236,7 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
       onClick={() => (blocked ? handleUnblockUserClick(_id) : handleBlockUserClick(_id))}
       size="sm"
       className="flex items-center gap-1"
+      placeholder={'block'}
     >
       {blocked ? <FaCheckCircle className="h-4 w-4" style={{ color: 'green' }} /> : <FaBan className="h-4 w-4" style={{ color: 'red' }} />}
       {blocked ? 'Unblock' : 'Block'}
@@ -242,8 +251,8 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm" disabled={selectedPage === 1} onClick={() => handlePageClick(selectedPage - 1)}>
+      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4" placeholder={'cardfooter'}>
+        <Button placeholder={'previous'} variant="outlined" size="sm" disabled={selectedPage === 1} onClick={() => handlePageClick(selectedPage - 1)}>
           Previous
         </Button>
         <div className="flex items-center gap-2">
@@ -254,12 +263,14 @@ export const UserListingTable: React.FC<UserListingTableProps> = () => {
               color={pageNumber + 1 === selectedPage ? "blue" : "gray"}
               onClick={() => handlePageClick(pageNumber + 1)}
               className="rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
+              placeholder={'pagenumber'}
             >
               {pageNumber + 1}
+              
             </Button>
           ))}
         </div>
-        <Button variant="outlined" size="sm" disabled={startIndex + pageSize >= users.length} onClick={() => handlePageClick(selectedPage + 1)}>
+        <Button placeholder={'next'} variant="outlined" size="sm" disabled={startIndex + pageSize >= users.length} onClick={() => handlePageClick(selectedPage + 1)}>
           Next 
         </Button>
       </CardFooter>

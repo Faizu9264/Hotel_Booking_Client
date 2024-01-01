@@ -17,6 +17,7 @@ export interface Booking {
   discountPrice: number;
   paymentStatus: string;
   BookingStatus: string;
+  createdAt: string;
   RoomId: {
     id: string;
     roomType: string;
@@ -32,16 +33,16 @@ export interface Booking {
   };
 }
 
-interface AllBookingsSlice extends SliceCaseReducers<{ allBookings: Booking[] }> {
-  addBooking: (state: { allBookings: Booking[] }, action: PayloadAction<Booking[]>) => void;
-  updateBookingStatus: (
-    state: { allBookings: Booking[] },
-    action: PayloadAction<{ bookingId: string; bookingStatus: string }>
-  ) => void;
+
+
+interface AllBookingsState {
+  allBookings: Booking[];
+  selectedBookingId: string | null;
 }
 
-const initialState: { allBookings: Booking[] } = {
+const initialState: AllBookingsState = {
   allBookings: [],
+  selectedBookingId: null,
 };
 
 
@@ -56,7 +57,9 @@ const allBookingsSlice = createSlice({
 
       state.allBookings = [...state.allBookings, ...uniqueBookings];
     },
-
+    setSelectedBookingId: (state, action: PayloadAction<string | null>) => {
+      state.selectedBookingId = action.payload;
+    },
     updateBookingStatus: (state, action) => {
       const { bookingId, bookingStatus } = action.payload;
       const index = state.allBookings.findIndex((booking) => booking._id === bookingId);
@@ -69,7 +72,7 @@ const allBookingsSlice = createSlice({
 });
 
 
-export const { addBooking, updateBookingStatus } = allBookingsSlice.actions;
+export const { addBooking, updateBookingStatus ,setSelectedBookingId } = allBookingsSlice.actions;
 export const selectAllBookings = (state: { allBookings: Booking[] }) => state.allBookings;
 
 export default allBookingsSlice.reducer;

@@ -1,7 +1,7 @@
 // AppRouter.tsx
 import React,{useEffect} from 'react';
 import { Routes, Route } from 'react-router-dom';
-import PrivateRoute from './PrivateRoute'; 
+// import PrivateRoute from './PrivateRoute'; 
 import Home from "../pages/Home";
 import Login from "../components/auth/Login";
 import UserRouter from './UserRouter';
@@ -15,18 +15,13 @@ const AppRouter: React.FC = () => {
       <Route path="/login" element={<Login />} />
       <Route
         path="/user/*"
-        element={
-          <PrivateRoute
-            element={<UserRouter />}
-          />
+        element={<UserRouter />
         }
       />
       <Route
         path="/admin/*"
         element={
-          <PrivateRoute
-            element={<AdminRouter />}
-          />
+        <AdminRouter />
         }
       />
     </Routes>

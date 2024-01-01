@@ -32,8 +32,9 @@ export const HotelListingTable: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await dispatch(adminApi.getAllHotels()); 
-        console.log('All Hotels,,:', response);
+        if (hotels.length <= 0) {
+          dispatch(adminApi.getAllHotels());
+       }
         
       } catch (error) {
         console.error('Error fetching hotel data:', error);
@@ -60,16 +61,16 @@ export const HotelListingTable: React.FC = () => {
     navigate(`/admin/dashboard/editHotel?hotelId=${hotelId}`);
   };
   return (
-    <Card className="h-full w-full overflow-hidden">
-      <CardHeader floated={false} shadow={false} className="rounded-none">
+    <Card className="h-full w-full overflow-hidden"  placeholder={'card'}>
+      <CardHeader floated={false} shadow={false} className="rounded-none"  placeholder={'cardHeader'}>
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
-            <Typography variant="h5" color="blue-gray" className='ml-3 mt-3'>
+            <Typography variant="h5" color="blue-gray" className='ml-3 mt-3'  placeholder={'typography'}>
               Manage Hotels
             </Typography>
           </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <Button onClick={handleAddHotelsClick} className="flex items-center gap-3 text-black mt-3 mr-3" variant="outlined" size="sm">
+            <Button  placeholder={'typography'} onClick={handleAddHotelsClick} className="flex items-center gap-3 text-black mt-3 mr-3" variant="outlined" size="sm">
               Add Hotels
             </Button>
           </div>
@@ -98,7 +99,7 @@ export const HotelListingTable: React.FC = () => {
 
         </div>
       </CardHeader>
-      <CardBody className="overflow-x-auto px-0">
+      <CardBody className="overflow-x-auto px-0"  placeholder={'typography'}>
         <table className="w-full table-auto text-left">
           <thead>
             <tr>
@@ -107,12 +108,14 @@ export const HotelListingTable: React.FC = () => {
                    variant="small"
                    color="blue-gray"
                    className="font-normal leading-none opacity-70"
+                   placeholder={'typography'}
                  >
                    Photo
                  </Typography>
                </th>
               <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Typography
+                 placeholder={'typography'}
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
@@ -122,6 +125,7 @@ export const HotelListingTable: React.FC = () => {
               </th>
               <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Typography
+                 placeholder={'typography'}
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
@@ -131,6 +135,7 @@ export const HotelListingTable: React.FC = () => {
               </th>
               <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Typography
+                 placeholder={'typography'}
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
@@ -140,6 +145,7 @@ export const HotelListingTable: React.FC = () => {
               </th>
               <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Typography
+                 placeholder={'typography'}
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
@@ -149,6 +155,7 @@ export const HotelListingTable: React.FC = () => {
               </th>
               <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Typography
+                 placeholder={'typography'}
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
@@ -158,6 +165,7 @@ export const HotelListingTable: React.FC = () => {
               </th>
               <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Typography
+                 placeholder={'typography'}
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
@@ -168,6 +176,7 @@ export const HotelListingTable: React.FC = () => {
              
               <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
                 <Typography
+                 placeholder={'typography'}
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
@@ -187,6 +196,7 @@ export const HotelListingTable: React.FC = () => {
                 <tr key={_id}>
                 <td className={classes}>
                   <Avatar
+                   placeholder={'avatar'}
                     src={images[0]} 
                     alt={details.hotelName}
                     size="sm" 
@@ -195,39 +205,39 @@ export const HotelListingTable: React.FC = () => {
                   />
                 </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-bold">
+                    <Typography  placeholder={'typography'} variant="small" color="blue-gray" className="font-bold">
                       {details.hotelName}
                     </Typography>
                   </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-normal">
+                    <Typography  placeholder={'typography'} variant="small" color="blue-gray" className="font-normal">
                       {details.location}
                     </Typography>
                   </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-normal">
+                    <Typography  placeholder={'typography'} variant="small" color="blue-gray" className="font-normal">
                       {details.minRent}
                     </Typography>
                   </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-normal">
+                    <Typography  placeholder={'typography'} variant="small" color="blue-gray" className="font-normal">
                       {details.contactNo}
                     </Typography>
                   </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-normal">
+                    <Typography  placeholder={'typography'} variant="small" color="blue-gray" className="font-normal">
                       {details.emailAddress}
                     </Typography>
                   </td>
                   <td className={classes}>
-                    <Typography variant="small" color="blue-gray" className="font-normal">
+                    <Typography placeholder={'typography'} variant="small" color="blue-gray" className="font-normal">
                       {details.description}
                     </Typography>
                   </td>
                   
                   <td className={classes}>
               <Tooltip content="Edit Hotel">
-                <IconButton variant="text" onClick={() => handleEditHotelClick(_id)}>
+                <IconButton  placeholder={'typography'} variant="text" onClick={() => handleEditHotelClick(_id)}>
                   <PencilIcon className="h-4 w-4" />
                 </IconButton>
               </Tooltip>
@@ -238,13 +248,14 @@ export const HotelListingTable: React.FC = () => {
           </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm" disabled={selectedPage === 1} onClick={() => handlePageClick(selectedPage - 1)}>
+      <CardFooter  placeholder={'cardfooter'} className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+        <Button  placeholder={'previous'} variant="outlined" size="sm" disabled={selectedPage === 1} onClick={() => handlePageClick(selectedPage - 1)}>
           Previous
         </Button>
         <div className="flex items-center gap-2">
           {[...Array(Math.ceil(hotels.length / pageSize)).keys()].map((pageNumber) => (
             <Button
+            placeholder={'pagenumber'}
               key={pageNumber + 1}
               variant={pageNumber + 1 === selectedPage ? "filled" : "text"}
               color={pageNumber + 1 === selectedPage ? "blue" : "gray"}
@@ -255,7 +266,7 @@ export const HotelListingTable: React.FC = () => {
             </Button>
           ))}
         </div>
-        <Button variant="outlined" size="sm" disabled={startIndex + pageSize >= hotels.length} onClick={() => handlePageClick(selectedPage + 1)}>
+        <Button  placeholder={'next'} variant="outlined" size="sm" disabled={startIndex + pageSize >= hotels.length} onClick={() => handlePageClick(selectedPage + 1)}>
           Next 
         </Button>
       </CardFooter>

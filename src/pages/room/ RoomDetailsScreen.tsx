@@ -28,6 +28,7 @@ import PoolIcon from '@mui/icons-material/Pool';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import SpaIcon from '@mui/icons-material/Spa';
 import { useDispatch } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const Transition = forwardRef<unknown, SlideProps>((props, ref) => {
   return <Slide direction="up" {...props} ref={ref as React.Ref<unknown>} />;
@@ -49,6 +50,7 @@ const RoomDetailsScreen = () => {
   const room = selected
   
   const roomId = new URLSearchParams(window.location.search).get('roomId') ?? '';
+  const isUserLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -57,19 +59,37 @@ const RoomDetailsScreen = () => {
   };
 
   const handleBookNow = () => {
-    if (room) {
-      dispatch(
-        setBookingDetails({
-          roomDetails: {
-            ...room,
-            id:roomId,
-            hotelId: room?.hotelId ?? '', 
-          },
-        })
-      );
-      navigate('/user/checkout', { state: { roomId } });
+    if (!isUserLoggedIn) {
+      navigate(-1);
+        Swal.fire({
+            title: 'Login Required',
+            text: 'You need to log in to make a booking. Do you want to log in now?',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Log In',
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigate('/login');
+            }
+        });
+    } else {
+        if (room) {
+            dispatch(
+                setBookingDetails({
+                    roomDetails: {
+                        ...room,
+                        id: roomId,
+                        hotelId: room?.hotelId ?? '',
+                    },
+                })
+            );
+            navigate('/user/checkout', { state: { roomId } });
+        }
     }
-  };
+};
   
 
   return (

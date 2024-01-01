@@ -6,10 +6,11 @@ import { RootState } from '../../../../redux/store';
 import adminApi from '../../../../services/adminApi';
 import { Dispatch } from 'redux';
 import { updateBookingStatus, selectAllBookings } from '../../../../redux/slices/AllBookingsSlice';
-import { addBooking } from '../../../../redux/slices/AllBookingsSlice';
-
-
-interface Booking {
+import BookingDetailsModal from './BookingDetailsModal';
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
+import Swal from 'sweetalert2'
+import { setSelectedBookingId } from '../../../../redux/slices/AllBookingsSlice';
+export interface Booking {
   _id: string;
   guestName: string;
   email: string;
@@ -26,6 +27,7 @@ interface Booking {
   discountPrice: number;
   paymentStatus: string;
   BookingStatus: string;
+  createdAt: string;
   RoomId: {
     id: string;
     roomType: string;
@@ -49,6 +51,8 @@ export const BookingListingTable: React.FC = () => {
 
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const [selectedBookingDetails, setSelectedBookingDetails] = useState<null | Booking>(null);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedBookingDetailsForModal, setSelectedBookingDetailsForModal] = useState<Booking | null>(null);
 
   const pageSize: number = 3;
 
@@ -64,7 +68,7 @@ export const BookingListingTable: React.FC = () => {
     };
 
     fetchData();
-  }, [dispatch,bookings]);
+  }, [dispatch]);
 
   const startIndex: number = (selectedPage - 1) * pageSize;
   const displayedBookings: Booking[] = bookings?.slice(startIndex, startIndex + pageSize) || [];
@@ -74,43 +78,134 @@ export const BookingListingTable: React.FC = () => {
     setSelectedPage(pageNumber);
   };
 
-  const handleManageBookingClick = (bookingId: string): void => {
-    const selectedBooking = bookings.find((booking) => booking._id === bookingId);
-    setSelectedBookingDetails(selectedBooking || null);
+  const handleViewDetailsClick = (bookingId: string) => {
+    dispatch(setSelectedBookingId(bookingId));
+    setModalOpen(true);
   };
+
+  // Function to close the modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedBookingDetailsForModal(null);
+  };
+
 
   const handleApproveBookingClick = async (bookingId?: string): Promise<void> => {
     if (bookingId) {
-      try {
-        await dispatch(updateBookingStatus({ bookingId, bookingStatus: 'Approved' }));
-      } catch (error) {
-        console.error('Error approving booking:', error);
-      }
+      showApproveConfirmationDialog(bookingId);
     }
   };
 
   const handleCancelBookingClick = async (bookingId?: string): Promise<void> => {
     if (bookingId) {
-      try {
-        await dispatch(updateBookingStatus({ bookingId, bookingStatus: 'Cancelled' }));
-      } catch (error) {
-        console.error('Error cancelling booking:', error);
+      showCancelConfirmationDialog(bookingId);
+    }
+  };
+  const showApproveConfirmationDialog = (bookingId: string) => {
+    Swal.fire({
+      title: 'Confirm Approval',
+      text: 'Are you sure you want to approve this booking?',
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, approve it!',
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        approveBooking(bookingId);
       }
+    });
+  };
+
+  const showCancelConfirmationDialog = (bookingId: string) => {
+    Swal.fire({
+      title: 'Confirm Cancellation',
+      text: 'Are you sure you want to cancel this booking?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, cancel it!',
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        cancelBooking(bookingId);
+      }
+    });
+  };
+
+
+  
+  const approveBooking = async (bookingId: string) => {
+    try {
+      console.log('bookingId',bookingId);
+
+      // Make API request to update booking status
+       dispatch(adminApi.approveBooking(bookingId));
+
+      // Update global state
+      dispatch(updateBookingStatus({ bookingId, bookingStatus: 'approved by admin' }));
+
+      // Show success message
+      Swal.fire({
+        title: 'Approved!',
+        text: 'The booking has been approved.',
+        icon: 'success',
+      });
+    } catch (error) {
+      console.error('Error approving booking:', error);
     }
   };
 
+  const cancelBooking = async (bookingId: string) => {
+    try {
+      console.log('bookingId',bookingId);
+      
+      // Make API request to update booking status
+      await dispatch(adminApi.cancelBooking(bookingId));
+      // Update global state
+      dispatch(updateBookingStatus({ bookingId, bookingStatus: 'cancelled by admin' }));
+
+      // Show success message
+      Swal.fire({
+        title: 'Cancelled!',
+        text: 'The booking has been cancelled.',
+        icon: 'success',
+      });
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+    }
+  };
+
+  const getStatusBadgeColor = (status: string): string => {
+    switch (status) {
+      case 'confirmed':
+        return 'green';
+        case 'success':
+          return 'green';
+      case 'pending':
+        return 'orange';
+      case 'canceled by admin':
+        return 'red';
+      case 'approved by admin':
+        return 'blue';
+      default:
+        return 'gray';
+    }
+  };
+
+
   return (
-    <Card className="h-full w-full overflow-hidden">
-      <CardHeader floated={false} shadow={false} className="rounded-none">
+    <Card className="h-full w-full overflow-hidden" placeholder={'card'}>
+      <CardHeader floated={false} shadow={false} className="rounded-none" placeholder={'card header'}>
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div>
-            <Typography variant="h5" color="blue-gray" className="ml-3 mt-3">
+            <Typography variant="h5" color="blue-gray" className="ml-3 mt-3" placeholder={'typograpy'}>
               Manage Bookings
             </Typography>
           </div>
         </div>
       </CardHeader>
-      <CardBody className="overflow-x-auto px-0">
+      <CardBody className="overflow-x-auto px-0" placeholder={'card'}>
         <table className="w-full table-auto text-left">
           <thead>
             <tr>
@@ -119,6 +214,7 @@ export const BookingListingTable: React.FC = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
                 >
                   Hotel Name
                 </Typography>
@@ -128,6 +224,8 @@ export const BookingListingTable: React.FC = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
                 >
                   Room Type
                 </Typography>
@@ -137,6 +235,19 @@ export const BookingListingTable: React.FC = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
+                >
+                  Nights
+                </Typography>
+              </th>
+              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
                 >
                   Check-In Date
                 </Typography>
@@ -146,6 +257,8 @@ export const BookingListingTable: React.FC = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
                 >
                   Check-Out Date
                 </Typography>
@@ -155,6 +268,8 @@ export const BookingListingTable: React.FC = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
                 >
                   Total
                 </Typography>
@@ -164,6 +279,8 @@ export const BookingListingTable: React.FC = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
                 >
                   Payment Status
                 </Typography>
@@ -173,6 +290,8 @@ export const BookingListingTable: React.FC = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
                 >
                   Booking Status
                 </Typography>
@@ -182,79 +301,171 @@ export const BookingListingTable: React.FC = () => {
                   variant="small"
                   color="blue-gray"
                   className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
                 >
                   Actions
+                </Typography>
+              </th>
+              <th className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal leading-none opacity-70"
+                  placeholder={'typography'}
+
+                >
+                  Details
                 </Typography>
               </th>
             </tr>
           </thead>
           <tbody>
-          {displayedBookings.map(
-              ({ _id, RoomId, checkInDate, checkOutDate, total, paymentStatus, BookingStatus }) => {
-                const isLast = _id === displayedBookings[displayedBookings.length - 1]._id;
-                const classes = isLast ? 'p-4' : 'p-4 border-b border-blue-gray-50';
+        {displayedBookings.map(
+          ({
+            _id,
+            RoomId,
+            nightCount,
+            checkInDate,
+            checkOutDate,
+            total,
+            paymentStatus,
+            BookingStatus,
+          }) => {
+            const isLast =
+              _id === displayedBookings[displayedBookings.length - 1]._id;
+            const classes = isLast
+              ? 'p-4'
+              : 'p-4 border-b border-blue-gray-50';
 
-                return (
-                  <tr key={_id}>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray">
-                        {RoomId.hotelName}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray">
-                        {RoomId.roomType}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray">
-                        {new Date(checkInDate).toLocaleDateString()}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray">
-                        {new Date(checkOutDate).toLocaleDateString()}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray">
-                        {total}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray">
-                        {paymentStatus}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography variant="small" color="blue-gray">
-                        {BookingStatus}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleManageBookingClick(_id)}
-                        size="sm"
-                        className="flex items-center gap-1"
-                      >
-                        <FaBan className="h-4 w-4" style={{ color: 'red' }} />
-                        Manage
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              }
-            )}
-          </tbody>
+            return (
+              <tr key={_id}>
+                <td className={classes}>
+                  <Typography placeholder={'typography'} variant="small" color="blue-gray" >
+                    {RoomId.hotelName}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography variant="small" color="blue-gray"
+                  placeholder={'typography'}
+                  >
+                    {RoomId.roomType}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography variant="small" color="blue-gray" 
+                  placeholder={'typography'}
+                  >
+                    {nightCount}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography variant="small" color="blue-gray"
+                  placeholder={'typography'}
+                  >
+                    {new Date(checkInDate).toLocaleDateString()}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography variant="small" color="blue-gray"
+                  placeholder={'typography'}
+                  >
+                    {new Date(checkOutDate).toLocaleDateString()}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography variant="small" color="blue-gray"
+                  placeholder={'typography'}
+                  >
+                    {total}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    style={{ color: getStatusBadgeColor(paymentStatus) }}
+                  placeholder={'typography'}
+
+                  >
+                    {paymentStatus}
+                  </Typography>
+                </td>
+                <td className={classes}>
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    style={{ color: getStatusBadgeColor(BookingStatus) }}
+                  placeholder={'typography'}
+
+                  >
+                    {BookingStatus}
+                  </Typography>
+                </td>
+                <td className={classes}>
+      {BookingStatus === 'confirmed' && (
+        <>
+          <Button
+            variant="outlined"
+            onClick={() => handleApproveBookingClick(_id)}
+            size="sm"
+            className="flex items-center gap-1"
+            style={{marginBottom:'10px'}}
+            placeholder={'button'}
+
+          >
+            <FaCheckCircle
+              className="h-4 w-4"
+              style={{ color: 'green' }}
+            />
+            Approve
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => handleCancelBookingClick(_id)}
+            size="sm"
+            className="flex items-center gap-1"
+            placeholder={'button'}
+          >
+            <FaBan className="h-4 w-4" style={{ color: 'red' }} />
+            Cancel
+          </Button>
+        
+
+
+        </>
+      )}
+    </td>
+    <td className={classes}>
+    <Button
+  variant="outlined"
+  placeholder={'button'}
+  onClick={() => handleViewDetailsClick(
+    _id,
+  )}
+  size="sm"
+  className="flex items-center gap-1"
+>
+  View
+</Button>
+    </td>
+              </tr>
+            );
+          }
+        )}
+        
+      </tbody>
         </table>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4"
+                  placeholder={'cardFooter'}
+                  >
         <Button
           variant="outlined"
           size="sm"
           disabled={selectedPage === 1}
           onClick={() => handlePageClick(selectedPage - 1)}
+          placeholder={'button'}
         >
           Previous
         </Button>
@@ -263,6 +474,7 @@ export const BookingListingTable: React.FC = () => {
             (pageNumber) => (
               <Button
                 key={pageNumber + 1}
+                placeholder={'button'}
                 variant={
                   pageNumber + 1 === selectedPage ? 'filled' : 'text'
                 }
@@ -279,11 +491,17 @@ export const BookingListingTable: React.FC = () => {
           variant="outlined"
           size="sm"
           disabled={startIndex + pageSize >= bookings.length}
+          placeholder={'button'}
+
           onClick={() => handlePageClick(selectedPage + 1)}
         >
           Next
         </Button>
       </CardFooter>
+      <BookingDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </Card>
   );
 };

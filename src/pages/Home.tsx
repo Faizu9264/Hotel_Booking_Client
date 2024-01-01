@@ -1,5 +1,4 @@
 // Home.tsx
-
 import React,{useEffect,useState} from 'react';
 import Navbar from '../components/common/Navbar';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,7 +24,8 @@ const Home: React.FC = () => {
   return (
     <div >
       <Navbar user={user} />
-      <HomeScreen handleOpenProfileModal={handleOpenProfileModal} />
+
+      <HomeScreen handleOpenProfileModal={handleOpenProfileModal}/>
       <Footer/>
     </div>
   );
