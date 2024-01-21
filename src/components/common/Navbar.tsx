@@ -53,7 +53,7 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const socket = useRef<Socket | null>();
   useEffect(() => {
     if (!socket.current && userData) {
-      socket.current = io("http://localhost:5000");
+      socket.current = io(import.meta.env. VITE_SERVER_URL);
       socket.current.emit("addUser", userData?.userId);
       socket.current.on("getUser", (data) => {
       });

@@ -2,6 +2,9 @@
 
 interface ImportMeta {
   env: {
+    VITE_ADMIN_API_BASE_URL:string;
+    VITE_SERVER_URL:string;
+    VITE_USER_API_BASE_URL:string;
     VITE_GOOGLE_ONETAP: string;
     VITE_MAPBOX_TOKEN: string;
     DROP_IMAGE: string;

@@ -5,7 +5,7 @@ import createAxiosInstance from "./axiosConfig";
 import { setHotels } from "../redux/slices/hotelSlice";
 import { setRooms } from "../redux/slices/roomSlice";
 import { addBooking } from "../redux/slices/AllBookingsSlice";
-const ADMIN_API_BASE_URL = "http://localhost:5000/admin";
+const ADMIN_API_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL
 const axiosInstance = createAxiosInstance(ADMIN_API_BASE_URL, "AdminToken");
 import {
   setAllUsers,

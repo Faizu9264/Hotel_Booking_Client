@@ -1,6 +1,6 @@
 // userApi.ts
 import createAxiosInstance from "./axiosConfig";
-const API_BASE_URL = "http://localhost:5000/user";
+const API_BASE_URL = import.meta.env.VITE_USER_API_BASE_URL
 const axiosInstance = createAxiosInstance(API_BASE_URL, "UserToken");
 import { loadStripe } from "@stripe/stripe-js";
 import { BookingDetails } from "../types/booking";
