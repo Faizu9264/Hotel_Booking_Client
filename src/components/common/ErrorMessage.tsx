@@ -1,6 +1,6 @@
 // ErrorMessage.tsx
-import React from 'react';
-import { Alert, AlertTitle } from '@mui/material';
+import React from "react";
+import { Alert, AlertTitle } from "@mui/material";
 
 interface ErrorMessageProps {
   message: string;
@@ -8,7 +8,7 @@ interface ErrorMessageProps {
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
   return (
-    <Alert severity="error" sx={{minHeight:'300PX'}}>
+    <Alert severity="error" sx={{ minHeight: "300PX" }}>
       <AlertTitle>Error</AlertTitle>
       {message}
     </Alert>

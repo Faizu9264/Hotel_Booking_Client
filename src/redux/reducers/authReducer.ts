@@ -39,21 +39,17 @@ const authReducer = (state = initialState, action: any) => {
         users: action.payload,
       };
       case BLOCK_USER:
-        // Update users and set blocked status
         const blockedUsers = state.users.map((user) =>
           user._id === action.payload ? { ...user, blocked: true } : user
         );
-        // Dispatch setAllUsers to update the state
         return {
           ...state,
           users: blockedUsers,
         };
       case UNBLOCK_USER:
-        // Update users and set unblocked status
         const unblockedUsers = state.users.map((user) =>
           user._id === action.payload ? { ...user, blocked: false } : user
         );
-        // Dispatch setAllUsers to update the state
         return {
           ...state,
           users: unblockedUsers,

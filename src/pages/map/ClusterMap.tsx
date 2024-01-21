@@ -1,53 +1,17 @@
+import React, { useEffect, useState, useRef } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import ReactMapGL, { GeolocateControl, Marker, Popup } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import { Avatar, Box, Paper, Tooltip } from "@mui/material";
+import SuperCluster from "supercluster";
 
-import React, { useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import ReactMapGL, { GeolocateControl, ViewState, Marker, Popup  } from 'react-map-gl';
-import Grid from '@mui/material';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { Avatar, Box, Paper, Tooltip } from '@mui/material';
-import SuperCluster from 'supercluster';
-import api from '../../services/userApi';
-import { setHotels } from '../../redux/slices/hotelSlice';
-import PopupHotel from './PopupHotel';
-import PriceSlider from '../../components/searchBar/PriceSlider';
-import GeocoderInput from '../../components/searchBar/GeocoderInput';
-import './cluster.css';
-interface Hotel {
-  _id: string;
-  details: {
-    hotelName: string;
-    minRent: number;
-    location: string;
-    emailAddress: string;
-    description: string;
-    contactNo: number;
-  };
-  images: string[];
-  location: { lat: number; lng: number };
-  dropImage: string;
-  createdAt: Date;
-}
-
-interface PointFeature {
-  type: 'Feature';
-  properties: {
-    cluster: boolean;
-    hotelId: string;
-    hotelName: string;
-    minimumRent: number;
-    description: string;
-    hotelImage: string[];
-    longitude: number;
-    latitude: number;
-    dropImage: string;
-  };
-  geometry: {
-    type: 'Point';
-    coordinates: [number, number];
-  };
-  id?: string;
-}
+import PopupHotel from "./PopupHotel";
+import PriceSlider from "../../components/searchBar/PriceSlider";
+import GeocoderInput from "../../components/searchBar/GeocoderInput";
+import "./cluster.css";
+import { Hotel } from "../../types/hotel";
+import { PointFeature } from "src/types/map";
 
 const superCluster = new SuperCluster({
   radius: 75,
@@ -55,7 +19,6 @@ const superCluster = new SuperCluster({
 });
 
 const MapScreen: React.FC = () => {
-  const dispatch = useDispatch<any>();
   const hotels = useSelector((state: RootState) => state.hotel.filteredHotels);
   const mapRef = useRef<any>(null);
 
@@ -65,31 +28,28 @@ const MapScreen: React.FC = () => {
   const [zoom, setZoom] = useState<number>(0);
   const [popupInfo, setPopupInfo] = useState<PointFeature | null>(null);
 
-  // const updateLocation = (coords: { longitude: number; latitude: number }) => {
-  //   // dispatch(updateLocationAction(coords));
-  // };
-
-
   const handleSearchLocation = async (location: string) => {
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          location
+        )}.json?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`
       );
       const data = await response.json();
       const [longitude, latitude] = data.features[0].center;
       mapRef?.current?.flyTo({
         center: [longitude, latitude],
-        zoom: 12, 
+        zoom: 12,
         speed: 1,
       });
     } catch (error) {
-      console.error('Error searching location:', error);
+      console.error("Error searching location:", error);
     }
   };
-  
+
   useEffect(() => {
     const updatedPoints: PointFeature[] = hotels.map((hotel: Hotel) => ({
-      type: 'Feature',
+      type: "Feature",
       properties: {
         cluster: false,
         hotelId: hotel._id,
@@ -105,7 +65,7 @@ const MapScreen: React.FC = () => {
         dropImage: hotel.images[0],
       },
       geometry: {
-        type: 'Point',
+        type: "Point",
         coordinates: [hotel.location.lng, hotel.location.lat],
       },
     }));
@@ -114,7 +74,10 @@ const MapScreen: React.FC = () => {
 
   useEffect(() => {
     superCluster.load(points);
-    const newClusters: PointFeature[] = superCluster.getClusters(bounds as any, zoom) as PointFeature[];
+    const newClusters: PointFeature[] = superCluster.getClusters(
+      bounds as any,
+      zoom
+    ) as PointFeature[];
     setClusters(newClusters);
   }, [points, zoom, bounds]);
 
@@ -124,34 +87,32 @@ const MapScreen: React.FC = () => {
     }
   }, [mapRef?.current]);
 
-
-
   return (
     <>
       <Box
         sx={{
-          position: 'relative',
+          position: "relative",
           height: 400,
         }}
       >
         <ReactMapGL
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
           initialViewState={{ latitude: 11, longitude: 76, zoom: 0 }}
           mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN as string}
           mapStyle="mapbox://styles/mapbox/streets-v11"
           ref={mapRef}
           onZoomEnd={(e) => setZoom(Math.round(e.viewState.zoom as number))}
         >
-
-<GeolocateControl
-  positionOptions={{ enableHighAccuracy: true }}
-  trackUserLocation={true}
-  showUserLocation={true}
-  position="top-left"
-/>
+          <GeolocateControl
+            positionOptions={{ enableHighAccuracy: true }}
+            trackUserLocation={true}
+            showUserLocation={true}
+            position="top-left"
+          />
 
           {clusters.map((cluster) => {
-            const { cluster: isCluster, point_count } = cluster.properties as any;
+            const { cluster: isCluster, point_count } =
+              cluster.properties as any;
             const [longitude, latitude] = cluster.geometry.coordinates;
             if (isCluster) {
               return (
@@ -167,7 +128,12 @@ const MapScreen: React.FC = () => {
                       height: `${10 + (point_count / points.length) * 20}px`,
                     }}
                     onClick={() => {
-                      const zoom = Math.min(superCluster.getClusterExpansionZoom(Number(cluster.id)), 20);
+                      const zoom = Math.min(
+                        superCluster.getClusterExpansionZoom(
+                          Number(cluster.id)
+                        ),
+                        20
+                      );
                       mapRef?.current?.flyTo({
                         center: [longitude, latitude],
                         zoom,
@@ -180,9 +146,13 @@ const MapScreen: React.FC = () => {
                 </Marker>
               );
             }
-  
+
             return (
-              <Marker key={`hotel-${cluster.properties.hotelId}`} longitude={longitude} latitude={latitude}>
+              <Marker
+                key={`hotel-${cluster.properties.hotelId}`}
+                longitude={longitude}
+                latitude={latitude}
+              >
                 <Tooltip title={cluster.properties.hotelName}>
                   <Avatar
                     src={cluster.properties.dropImage}
@@ -194,10 +164,20 @@ const MapScreen: React.FC = () => {
               </Marker>
             );
           })}
-           <Box sx={{ position: 'absolute', bottom: 285, left: 70, zIndex: 1 ,backgroundColor:'lightblue',paddingLeft:'20px',paddingRight:'20px'}}>
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 285,
+              left: 70,
+              zIndex: 1,
+              backgroundColor: "lightblue",
+              paddingLeft: "20px",
+              paddingRight: "20px",
+            }}
+          >
             <PriceSlider />
           </Box>
-  
+
           <GeocoderInput onSearch={handleSearchLocation} />
           {popupInfo && (
             <Popup
@@ -215,7 +195,6 @@ const MapScreen: React.FC = () => {
       </Box>
     </>
   );
-  
 };
 
 export default MapScreen;

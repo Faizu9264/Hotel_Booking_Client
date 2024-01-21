@@ -1,7 +1,10 @@
 // axiosConfig.ts
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from "axios";
 
-const createAxiosInstance = (baseURL: string, tokenKey: string): AxiosInstance => {
+const createAxiosInstance = (
+  baseURL: string,
+  tokenKey: string
+): AxiosInstance => {
   const instance: AxiosInstance = axios.create({
     baseURL,
     withCredentials: true,
@@ -12,9 +15,8 @@ const createAxiosInstance = (baseURL: string, tokenKey: string): AxiosInstance =
     const accessToken = localStorage.getItem(tokenKey);
 
     if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
-    console.log('Request interceptor', config);
 
     return config;
   });
@@ -22,20 +24,23 @@ const createAxiosInstance = (baseURL: string, tokenKey: string): AxiosInstance =
   // Response interceptor
   instance.interceptors.response.use(
     (response) => {
-      console.log('Response interceptor', response);
 
       return response;
     },
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 ) {
-        console.log('Access token expired',error.response);
+      if (error.response?.status === 401) {
 
-        originalRequest.headers['Authorization'] = `Bearer ${localStorage.getItem(tokenKey)}`;
-        return  axios(originalRequest);
+        originalRequest.headers[
+          "Authorization"
+        ] = `Bearer ${localStorage.getItem(tokenKey)}`;
+        return axios(originalRequest);
       }
+      if (error.response?.status === 404) {
 
+        window.location.href = "/404";
+      }
       return Promise.reject(error);
     }
   );

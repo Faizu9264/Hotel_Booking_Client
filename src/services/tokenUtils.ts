@@ -7,7 +7,6 @@ const checkTokenExpiration = (token: any, logoutAction: any, navigate: any) => {
   const dispatch = useDispatch();
 
   if (!token) {
-    console.log('no token');
     return;
   }
 

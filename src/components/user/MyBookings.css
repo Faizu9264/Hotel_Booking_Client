@@ -1,14 +1,6 @@
 /* MyBookings.css */
 
 
-  .table-container {
-    position: relative; /* Needed for the absolute positioning of front and back */
-  }
-  
-  /* Your existing styles for the table */
-  .TableContainer {
-    /* Add any additional styles you need for the table container */
-  }
   
   .table-headings {
     display: flex;

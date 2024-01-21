@@ -1,5 +1,5 @@
-import React from 'react';
-import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+import React from "react";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 
 type RoomType = {
   name: string;
@@ -11,7 +11,14 @@ type RoomTypeChartProps = {
 };
 
 const RoomTypeChart: React.FC<RoomTypeChartProps> = ({ roomTypesData }) => {
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#A4A4A4'];
+  const COLORS = [
+    "#0088FE",
+    "#00C49F",
+    "#FFBB28",
+    "#FF8042",
+    "#AF19FF",
+    "#A4A4A4",
+  ];
 
   return (
     <PieChart width={400} height={300}>

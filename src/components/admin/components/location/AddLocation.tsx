@@ -1,16 +1,13 @@
 // AddLocation.tsx
-// AddLocation.tsx
-import React, { useEffect, useRef } from 'react';
-import { useValue } from '../../../../context/ContextProvider';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import Geocoder from './Geocoder';
-import ChangeView from './ChangeView';
-import { ErrorBoundary } from 'react-error-boundary';
-import { RootState } from 'src/redux/store';
-import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useRef } from "react";
+import { useValue } from "../../../../context/ContextProvider";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import Geocoder from "./Geocoder";
+import ChangeView from "./ChangeView";
+import { ErrorBoundary } from "react-error-boundary";
+import { RootState } from "src/redux/store";
+import { useSelector } from "react-redux/es/hooks/useSelector";
 
 const AddLocation = () => {
   const {
@@ -19,29 +16,29 @@ const AddLocation = () => {
     },
     dispatch,
   } = useValue();
-  //  const dispatchRedux = useDispatch();
-  // const { hotelId } = useParams();
-  const hotelId = new URLSearchParams(window.location.search).get('hotelId');
+
+  const hotelId = new URLSearchParams(window.location.search).get("hotelId");
   const hotels = useSelector((state: RootState) => state.hotel.hotels);
-  const isEditMode = Boolean(new URLSearchParams(window.location.search).get('hotelId'));
-  
-  
-  
+  const isEditMode = Boolean(
+    new URLSearchParams(window.location.search).get("hotelId")
+  );
+
   useEffect(() => {
-  
-    if (hotels.length>0&& isEditMode) {
-  
+    if (hotels.length > 0 && isEditMode) {
       const hotelToUpdate = hotels.find((hotel: any) => hotel._id === hotelId);
-    
+
       if (hotelToUpdate) {
         dispatch({
-          type: 'UPDATE_LOCATION',
-          payload: { lat: hotelToUpdate.location.lat, lng: hotelToUpdate.location.lng },
+          type: "UPDATE_LOCATION",
+          payload: {
+            lat: hotelToUpdate.location.lat,
+            lng: hotelToUpdate.location.lng,
+          },
         });
       }
     }
   }, [isEditMode, hotelId, hotels, dispatch]);
-  
+
   const mapRef = useRef<any>(null);
 
   useEffect(() => {
@@ -50,9 +47,7 @@ const AddLocation = () => {
     }
   }, [lng, lat]);
 
-  useEffect(() => {
-    console.log('Updated Location:', { lng, lat });
-  }, [lng, lat]);
+ 
 
   const fallback = ({ error, resetErrorBoundary }: any) => (
     <div role="alert">
@@ -67,14 +62,14 @@ const AddLocation = () => {
       <div
         style={{
           height: 330,
-          position: 'relative',
+          position: "relative",
         }}
       >
         {/* Geocoder is now a child of MapContainer */}
         <MapContainer
           center={[lat || 0, lng || 0]}
           zoom={8}
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: "100%", height: "100%" }}
         >
           <Geocoder />
           <ChangeView center={[lat || 0, lng || 0]} zoom={8} />
@@ -85,7 +80,7 @@ const AddLocation = () => {
               dragend: (e: any) => {
                 const { lat, lng } = e.target._latlng;
                 dispatch({
-                  type: 'UPDATE_LOCATION',
+                  type: "UPDATE_LOCATION",
                   payload: { lng, lat },
                 });
               },
@@ -102,4 +97,3 @@ const AddLocation = () => {
 };
 
 export default AddLocation;
-

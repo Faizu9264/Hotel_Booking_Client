@@ -42,7 +42,6 @@ interface RoomDetails {
   images: string[];
 }
 
-// Update the BookingSlice interface
 interface BookingSlice extends SliceCaseReducers<BookingState> {
   setBookingDetails: (
     state: BookingState,

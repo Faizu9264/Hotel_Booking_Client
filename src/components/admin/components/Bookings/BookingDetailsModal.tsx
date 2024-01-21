@@ -1,28 +1,27 @@
+import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
+import { Typography } from "@material-tailwind/react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "./modal.css";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../redux/store";
+import { setSelectedBookingId } from "../../../../redux/slices/AllBookingsSlice";
+import { BookingDetailsModalProps } from "src/types/booking";
 
-
-
-
-import React, { useEffect, useState } from 'react';
-import Modal from 'react-modal';
-import { Button, Typography } from '@material-tailwind/react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import './modal.css'
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../../redux/store';
-import { setSelectedBookingId } from '../../../../redux/slices/AllBookingsSlice';
-
-interface BookingDetailsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ isOpen, onClose }) => {
+const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const dispatch = useDispatch();
-  const selectedBookingId = useSelector((state: RootState) => state.allBooking.selectedBookingId);
+  const selectedBookingId = useSelector(
+    (state: RootState) => state.allBooking.selectedBookingId
+  );
   const bookingDetails = useSelector((state: RootState) =>
-    state.allBooking.allBookings.find((booking) => booking._id === selectedBookingId)
+    state.allBooking.allBookings.find(
+      (booking) => booking._id === selectedBookingId
+    )
   );
 
   const [sliderSettings, setSliderSettings] = useState({
@@ -43,19 +42,21 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ isOpen, onClo
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} className="modal">
-      <div className="modal-content" >
-        <Typography variant="h6" color="blue-gray"
-                placeholder={'typography'}
-                >
+      <div className="modal-content">
+        <Typography variant="h6" color="blue-gray" placeholder={"typography"}>
           Booking Details
         </Typography>
-       
+
         {bookingDetails && (
           <div className="mt-4">
             <Slider {...sliderSettings}>
               {bookingDetails.RoomId.images.map((image, index) => (
                 <div key={index}>
-                  <img src={image} alt={`Room Image ${index + 1}`} className="mt-2 rounded-md" />
+                  <img
+                    src={image}
+                    alt={`Room Image ${index + 1}`}
+                    className="mt-2 rounded-md"
+                  />
                 </div>
               ))}
             </Slider>
@@ -63,9 +64,7 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ isOpen, onClo
         )}
       </div>
 
-   
       <div className="p-4 modal-content">
-
         {bookingDetails && (
           <div className="mt-4">
             <p>
@@ -78,14 +77,15 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ isOpen, onClo
               <strong>Phone:</strong> {bookingDetails.phone}
             </p>
             <p>
-              <strong>Special Requests:</strong> {bookingDetails.specialRequests}
+              <strong>Special Requests:</strong>{" "}
+              {bookingDetails.specialRequests}
             </p>
             <p>
-              <strong>Check-In Date:</strong>{' '}
+              <strong>Check-In Date:</strong>{" "}
               {new Date(bookingDetails.checkInDate).toLocaleDateString()}
             </p>
             <p>
-              <strong>Check-Out Date:</strong>{' '}
+              <strong>Check-Out Date:</strong>{" "}
               {new Date(bookingDetails.checkOutDate).toLocaleDateString()}
             </p>
             <p>
@@ -112,16 +112,14 @@ const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ isOpen, onClo
             <p>
               <strong>Booking Status:</strong> {bookingDetails.BookingStatus}
             </p>
-            
           </div>
-          
         )}
       </div>
       <div>
-     <button onClick={onClose} className="modal-close-btn">
+        <button onClick={onClose} className="modal-close-btn">
           <i className="material-icons">close</i>
         </button>
-     </div>
+      </div>
     </Modal>
   );
 };

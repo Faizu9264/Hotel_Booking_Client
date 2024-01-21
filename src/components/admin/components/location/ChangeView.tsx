@@ -1,6 +1,6 @@
 // ChangeView.tsx
-import { useEffect } from 'react';
-import { useMap } from 'react-leaflet';
+import { useEffect } from "react";
+import { useMap } from "react-leaflet";
 
 interface ChangeViewProps {
   center: [number, number];
@@ -9,7 +9,7 @@ interface ChangeViewProps {
 
 const ChangeView = ({ center, zoom }: ChangeViewProps) => {
   const map = useMap();
-  
+
   useEffect(() => {
     map.setView(center, zoom);
   }, [map, center, zoom]);

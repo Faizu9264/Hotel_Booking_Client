@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { styles } from './supportEngine';
-// import './Supportstyle.css';
 
 interface AvatarProps {
   style?: React.CSSProperties;
@@ -26,7 +25,7 @@ const Avatar: React.FC<AvatarProps> = (props) => {
         onClick={props.onClick}
         style={{
           ...styles.chatWithMeButton,
-          ...{ border: hovered ? '1px solid #9f0ff' : '4px solid #7a39e0' ,
+          ...{ border: hovered ? '1px solid #9f0ff' : '4px solid #7a39e0',
         },
         }}
       ></div>

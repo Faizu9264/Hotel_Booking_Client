@@ -1,24 +1,29 @@
 // InfoField.tsx
 
-import React, { useState, ChangeEvent } from 'react';
-import { Avatar, InputAdornment, TextField, TextFieldProps } from '@mui/material';
-import { Check } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
-import { updateSingleRoomDetails } from '../../../../redux/slices/singleRoomSlice';
+import React, { useState, ChangeEvent } from "react";
+import {
+  Avatar,
+  InputAdornment,
+  TextField,
+  TextFieldProps,
+} from "@mui/material";
+import { Check } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { updateSingleRoomDetails } from "../../../../redux/slices/singleRoomSlice";
 
-interface InfoFieldProps extends Omit<TextFieldProps, 'onChange'> {
+interface InfoFieldProps extends Omit<TextFieldProps, "onChange"> {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   minLength: number;
   optionalProps?: TextFieldProps;
-  fieldKey: string; 
-  min?: number; 
-  max?: number; 
-  startAdornment?: React.ReactElement; 
+  fieldKey: string;
+  min?: number;
+  max?: number;
+  readOnly?: boolean;
+  startAdornment?: React.ReactElement;
   endAdornment?: React.ReactElement;
 }
 
 let timer: NodeJS.Timeout;
-
 
 const InfoField: React.FC<InfoFieldProps> = ({
   onChange,
@@ -56,7 +61,9 @@ const InfoField: React.FC<InfoFieldProps> = ({
       required
       InputProps={{
         startAdornment: (
-          <InputAdornment position="start">{startAdornment || null}</InputAdornment>
+          <InputAdornment position="start">
+            {startAdornment || null}
+          </InputAdornment>
         ),
         endAdornment: (
           <InputAdornment position="end">
@@ -68,6 +75,5 @@ const InfoField: React.FC<InfoFieldProps> = ({
     />
   );
 };
-
 
 export default InfoField;

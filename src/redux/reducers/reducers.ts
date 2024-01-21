@@ -6,6 +6,8 @@ import mapReducer from '../slices/mapSlice';
 import roomReducer from '../slices/roomSlice';
 import singleRoomSlice from '../slices/singleRoomSlice';
 import AllBookingSlice from '../slices/AllBookingsSlice';
+import walletSlice from '../slices/walletSlice';
+
 const rootReducer = combineReducers({
   user: authReducer,
   admin: adminReducer,
@@ -14,6 +16,7 @@ const rootReducer = combineReducers({
   rooms: roomReducer ,
   room:singleRoomSlice,
   allBooking:AllBookingSlice,
+  wallet: walletSlice,
 });
 
 export default rootReducer;

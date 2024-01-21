@@ -1,15 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
-import App from './App';
-import './index.css'
-import _ from 'lodash';
-import store from './redux/store';
-import ContextProvider from './context/ContextProvider';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import App from "./App";
+import "./index.css";
+import _ from "lodash";
+import store from "./redux/store";
+import ContextProvider from "./context/ContextProvider";
 
-
-
-const root = document.getElementById('root');
+const root = document.getElementById("root");
 if (root) {
   ReactDOM.createRoot(root).render(
     <Provider store={store}>

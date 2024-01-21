@@ -1,5 +1,5 @@
 // hotelActionTypes.ts
-export const UPDATE_HOTEL = 'UPDATE_HOTEL';
+export const UPDATE_HOTEL = "UPDATE_HOTEL";
 
 export interface Hotel {
   _id: string;
@@ -12,7 +12,7 @@ export interface Hotel {
   phone: Number;
   lat: number;
   lng: number;
-  dropImage:string;
+  dropImage: string;
   createdAt: Date;
 }
 

@@ -11,6 +11,10 @@ import roomReducer from './slices/roomSlice'
 import singleRoomSlice from './slices/singleRoomSlice';
 import bookingReducer from './slices/bookingSlice';
 import AllBookingSlice from './slices/AllBookingsSlice';
+import couponReducer from './slices/couponSlice';
+import allReviewsReducer from './slices/allReviewsSlice'; 
+import walletSlice from './slices/walletSlice';
+
 const rootReducer = combineReducers({
   auth: authReducer,
   admin:adminReducer,
@@ -19,7 +23,10 @@ const rootReducer = combineReducers({
   rooms:roomReducer,
   room:singleRoomSlice,
   booking: bookingReducer,
-  allBooking:AllBookingSlice
+  allBooking:AllBookingSlice,
+  allReviews: allReviewsReducer,
+  wallet: walletSlice,
+  coupon: couponReducer,
 });
 
 const store = configureStore({

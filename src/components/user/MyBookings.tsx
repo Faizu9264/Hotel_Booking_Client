@@ -24,43 +24,14 @@ import api from '../../services/userApi';
 import { RootState } from '../../redux/store';
 import LoadingSpinner from '../common/LoadingSpinner';
 import './MyBookings.css'
-import { styled } from '@mui/system';
+import { minHeight, styled } from '@mui/system';
 import Swal from 'sweetalert2'
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
+import { useNavigate } from 'react-router-dom';
+import { addBooking } from '../../redux/slices/AllBookingsSlice';
+import { Booking } from '../../types/booking';
 
-
-interface Booking {
-  _id: string;
-  guestName: string;
-  email: string;
-  phone: string;
-  specialRequests: string;
-  checkInDate: Date;
-  checkOutDate: Date;
-  adultCount: number;
-  childrenCount: number;
-  roomCount: number;
-  nightCount: number;
-  maxPeople: number;
-  total: number;
-  discountPrice: number;
-  paymentStatus: string;
-  BookingStatus: string;
-  RoomId: {
-    id: string;
-    roomType: string;
-    hotelName: string;
-    hotelId: string;
-    amenities: string[];
-    rentAmount: number;
-    discountPrice: number;
-    roomsCount: number;
-    maxPeople: number;
-    description: string;
-    images: string[];
-  };
-}
 
 const FlipContainer = styled('div')({
   perspective: '1000px',
@@ -102,8 +73,8 @@ interface TableContainerProps {
 
 const TableContainerStyled = styled(TableContainer)<TableContainerProps>(({ theme }) => ({
   position: 'relative',
+  overflowY: 'auto',
 }));
-
 
 const MyBookings: React.FC = () => {
  
@@ -114,6 +85,7 @@ const MyBookings: React.FC = () => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const [imageLoaded, setImageLoaded] = useState(false);
   const dispatch: Dispatch<any> = useDispatch();
+  const navigate = useNavigate()
   const fetchData = async () => {
     try {
       const userId = String(userData._id || userData.userId);
@@ -129,6 +101,8 @@ const MyBookings: React.FC = () => {
 
       setCompletedBookings(completed);
       setUpcomingBookings(upcoming);
+      dispatch(addBooking(response));
+
     } catch (error: any) {
       console.error('Error fetching bookings:', error.message);
     }
@@ -158,12 +132,12 @@ const MyBookings: React.FC = () => {
     }
   };
 
-  const handleCancelBookingClick = async (bookingId?: string): Promise<void> => {
+  const handleCancelBookingClick = async (bookingId: string,total:number): Promise<void> => {
     if (bookingId) {
-      showCancelConfirmationDialog(bookingId);
+      showCancelConfirmationDialog(bookingId,total);
     }
   };
-  const showCancelConfirmationDialog = (bookingId: string) => {
+  const showCancelConfirmationDialog = (bookingId: string,total:number) => {
     Swal.fire({
       title: 'Confirm Cancellation',
       text: 'Are you sure you want to cancel this booking?',
@@ -174,21 +148,19 @@ const MyBookings: React.FC = () => {
       confirmButtonText: 'Yes, cancel it!',
     }).then((result: any) => {
       if (result.isConfirmed) {
-        CancelBooking(bookingId);
+        CancelBooking(bookingId,total);
       }
     });
   };
-  const CancelBooking = async (bookingId: string) => {
+  const CancelBooking = async (bookingId: string,total:number) => {
     try {
-      console.log('inscide cancel',bookingId);
       
-      // Make an API call to cancel the booking
-      await dispatch(api.cancelBooking(bookingId));
-
-      // Show success message
+     await dispatch(api.cancelBooking(bookingId,total,userData.userId));
+     const refundAmount = total || 0;
+     await api.refundBooking(userData.userId, { amount: refundAmount, paymentMethod: 'booking canceled by user' });
       Swal.fire({
-        title: 'Cancelled!',
-        text: 'The booking has been cancelled.',
+        title: 'Refund Successful!',
+        text: 'The booking has been canceled and the amount refunded.',
         icon: 'success',
       });
       fetchData();
@@ -196,7 +168,9 @@ const MyBookings: React.FC = () => {
       console.error('Error canceling booking:', error.message);
     }
   };
-
+  const handleOpenReviewPage = (booking: Booking) => {
+    navigate(`/reviews/add?bookingId=${booking._id}`);
+  };
   const getStatusBadgeColor = (status: string): string => {
     switch (status) {
       case 'confirmed':
@@ -250,7 +224,7 @@ const MyBookings: React.FC = () => {
                 {isUpcomingBooking(booking) &&
                   booking.BookingStatus !== 'canceled by user' &&
                   booking.BookingStatus !== 'canceled by admin' && (
-                    <Button sx={{ color: 'red' }} onClick={() => handleCancelBookingClick(booking._id)}>
+                    <Button sx={{ color: 'red' }} onClick={() => handleCancelBookingClick(booking._id,booking.total)}>
                       Cancel
                     </Button> 
                   )}
@@ -294,7 +268,12 @@ const MyBookings: React.FC = () => {
               <TableCell sx={{ color: 'green' }}>{booking.paymentStatus}</TableCell>
               <TableCell style={{ color: getStatusBadgeColor(booking?.BookingStatus) }}>{booking.BookingStatus}</TableCell>
               <TableCell>
-                <Button onClick={() => handleViewDetails(booking)}>View</Button>
+                <Button  onClick={() => handleViewDetails(booking)}>View</Button>
+                {booking.BookingStatus === 'approved by admin' && (
+              <Button onClick={() => handleOpenReviewPage(booking)}>
+                Add Review
+              </Button>
+            )}
               </TableCell>
             </TableRow>
           ))}
@@ -329,7 +308,8 @@ const MyBookings: React.FC = () => {
   };
 
   return (
-    <Container sx={{ minHeight: '400px', }} className="">
+    <div style={{minHeight:'900px'}}>
+    <Container className="" >
     <Typography variant="h4" align="center" gutterBottom>
       My Bookings
     </Typography>
@@ -436,6 +416,7 @@ const MyBookings: React.FC = () => {
         </DialogActions>
       </Dialog>
     </Container>
+    </div>
   );
 };
 

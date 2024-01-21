@@ -1,22 +1,22 @@
-
-
 import React, { useState, useEffect, useRef } from "react";
+import { Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import { UserData } from "../../types/authTypes";
 import { Link } from "react-router-dom";
-import { RootState } from '../../redux/store';
+import { RootState } from "../../redux/store";
 import AvatarMenu from "./AvatarMenu";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../redux/actions/authActions";
-import { useDispatch, useSelector } from 'react-redux';
-import { setLoginStatus } from '../../redux/actions/authActions';
+import { useDispatch, useSelector } from "react-redux";
+import { setLoginStatus } from "../../redux/actions/authActions";
 import { setUserData } from "../../redux/actions/authActions";
-import UserProfileModal from '../user/UserProfileModal';
-import { Socket,io } from "socket.io-client";
-import api from '../../services/userApi';
-import { setHotels } from '../../redux/slices/hotelSlice';
-import { Search, Person, Chat, Notifications } from "@material-ui/icons";
-import './navbar.css'
+import UserProfileModal from "../user/UserProfileModal";
+import { Socket, io } from "socket.io-client";
+import api from "../../services/userApi";
+import { setHotels } from "../../redux/slices/hotelSlice";
+import { TravelExplore } from "@mui/icons-material";
+
+import "./navbar.css";
 
 const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -28,7 +28,6 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   const hotels = useSelector((state: RootState) => state.hotel.hotels);
   const navigate = useNavigate();
 
-
   const handleOpenProfileModal = () => {
     setProfileModalOpen(true);
   };
@@ -38,62 +37,67 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
   };
   useEffect(() => {
     const fetchData = async () => {
-      const isUserLoggedInFromLocalStorage = localStorage.getItem('userData') !== null;
+      const isUserLoggedInFromLocalStorage =
+        localStorage.getItem("userData") !== null;
       dispatch(setLoginStatus(isUserLoggedInFromLocalStorage));
 
       if (isUserLoggedInFromLocalStorage) {
-        const userData = JSON.parse(localStorage.getItem('userData') || '');
+        const userData = JSON.parse(localStorage.getItem("userData") || "");
         dispatch(setUserData(userData));
       }
     };
 
     fetchData();
-  },[]);
-  
-  const socket = useRef<Socket|null>()
-  useEffect(()=>{ 
-    if(!socket.current && userData){ 
-      socket.current = io('http://localhost:5000'); 
-      socket.current.emit('addUser',(userData?.userId)) 
-      socket.current.on('getUser',(data)=>{ 
-        console.log(data); 
-      }) 
-      socket.current.on('responseIsBlocked',(data:{blocked:boolean})=>{ 
-        console.log('dataSocket',data); 
-        if(data.blocked){ 
-         dispatch(logoutUser()); 
-        } 
-      }) 
-       
-    } 
-  },[socket,userData])
+  }, []);
 
-
-
+  const socket = useRef<Socket | null>();
+  useEffect(() => {
+    if (!socket.current && userData) {
+      socket.current = io("http://localhost:5000");
+      socket.current.emit("addUser", userData?.userId);
+      socket.current.on("getUser", (data) => {
+      });
+      socket.current.on("responseIsBlocked", (data: { blocked: boolean }) => {
+        if (data.blocked) {
+          dispatch(logoutUser());
+        }
+      });
+    }
+  }, [socket, userData]);
 
   const handleLogout = () => {
-    localStorage.removeItem('userData')
+    localStorage.removeItem("userData");
     dispatch(logoutUser());
     dispatch(setLoginStatus(false));
-    navigate('/');
+    navigate("/");
   };
   const handleMenuToggle = () => {
     setMenuOpen(!menuOpen);
   };
   const handleLoginButtonClick = () => {
-    navigate('/user/login')
+    navigate("/login");
   };
 
-  const handleViewHotels = async() => {
-    
-    if(hotels.length<=0){
-        const response = await api.getAllHotels();
-        dispatch(setHotels(response as any));
+  const handleViewHotels = async () => {
+    if (hotels.length <= 0) {
+      const response = await api.getAllHotels();
+      dispatch(setHotels(response as any));
     }
-    navigate('/user/view-hotels');
+    navigate("/view-hotels");
   };
   const handleSignupButtonClick = () => {
-    navigate('/user/signup')
+    navigate("/signup");
+  };
+  const handleFindHotels = async () => {
+    try {
+      if (hotels.length <= 0) {
+        const response = await api.getAllHotels();
+        dispatch(setHotels(response as any));
+      }
+      navigate("/find-hotels");
+    } catch (error) {
+      console.error("Error fetching hotel data:", error);
+    }
   };
 
   return (
@@ -104,63 +108,43 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
             StayCation
           </Link>
         </div>
-
+        <div className="ml-5">
+          <Button
+            variant="outlined"
+            onClick={handleFindHotels}
+            sx={{ borderColor: "white", color: "white" }}
+            endIcon={<TravelExplore />}
+          >
+            Find Hotels
+          </Button>
+        </div>
         <div className="hidden md:flex items-center space-x-4 flex-grow">
           <div className="flex justify-center space-x-4 flex-grow">
             <NavLink
               to="/"
               className={`text-white hover:text-gray-300 transition duration-300 ${
-                window.location.pathname === "/" ? "border-b-2 border-white" : ""
+                window.location.pathname === "/"
+                  ? "border-b-2 border-white"
+                  : ""
               }`}
             >
               Home
             </NavLink>
             <NavLink
-              to="/user/view-hotels"
-              onClick={handleViewHotels} 
+              to="/view-hotels"
+              onClick={handleViewHotels}
               className={`text-white hover:text-gray-300 transition duration-300 ${
-                window.location.pathname === "/user/view-hotels"
+                window.location.pathname === "/view-hotels"
                   ? "border-b-2 border-white"
                   : ""
               }`}
             >
               Hotels
             </NavLink>
-            <NavLink
-              to="/user/view-rooms"
-              className={`text-white hover:text-gray-300 transition duration-300 ${
-                window.location.pathname === "/user/view-rooms"
-                  ? "border-b-2 border-violet-1----------700"
-                  : ""
-              }`}
-            >
-              Rooms
-            </NavLink>
-            <NavLink
-              to="/user/about"
-              className={`text-white hover:text-gray-300 transition duration-300 ${
-                window.location.pathname === "/user/about"
-                  ? "border-b-2 border-white"
-                  : ""
-              }`}
-            >
-              About
-            </NavLink>
-            <NavLink
-              to="/user/contact"
-              className={`text-white hover:text-gray-300 transition duration-300 ${
-                window.location.pathname === "/user/contact"
-                  ? "border-b-2 border-white"
-                  : ""
-              }`}
-            >
-              Contact
-            </NavLink>
           </div>
 
           {userData && isLoggedIn ? (
             <>
-          
               <AvatarMenu user={userData} />
             </>
           ) : (
@@ -184,22 +168,10 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
         <div className="md:hidden flex items-center">
           {userData && isLoggedIn ? (
             <>
-            
-              <img
-                src={userData.profileImage || "/logo/profile.png"}
-                alt="User Profile"
-                className="w-8 h-8 rounded-full border-2 border-white"
-              />
+              <AvatarMenu user={userData} />
             </>
           ) : (
-            <div className="flex space-x-4">
-              {/* <NavLink to="/signup" className="text-white hover:text-gray-300 transition duration-300">
-                Sign Up
-              </NavLink>
-              <NavLink to="/login" className="text-white hover:text-gray-300 transition duration-300">
-                Log In
-              </NavLink> */}
-            </div>
+            <div className="flex space-x-4"></div>
           )}
 
           <button
@@ -241,7 +213,6 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden ">
           <div className="container mx-auto py-2">
@@ -253,33 +224,14 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
             >
               Home
             </NavLink>
-            <NavLink
-              to="/user/about"
-              className={`block text-white hover:text-gray-300 transition duration-300 py-2 ${
-                window.location.pathname === "/user/about" ? "text-gray-300" : ""
-              }`}
-            >
-              About
-            </NavLink>
-            <NavLink
-              to="/user/contact"
-              className={`block text-white hover:text-gray-300 transition duration-300 py-2 ${
-                window.location.pathname === "/user/contact"
-                  ? "text-gray-300"
-                  : ""
-              }`}
-            >
-              Contact
-            </NavLink>
-            
+
             {userData && isLoggedIn && (
               <>
-              
                 <NavLink
                   to=""
                   onClick={handleOpenProfileModal}
                   className={`block text-white hover:text-gray-300 transition duration-300 py-2 ${
-                    window.location.pathname === "/user/profile"
+                    window.location.pathname === "/profile"
                       ? "text-gray-300"
                       : ""
                   }`}
@@ -290,9 +242,7 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
                   to=""
                   onClick={handleLogout}
                   className={`block text-white hover:text-gray-300 transition duration-300 py-2 ${
-                    window.location.pathname === "/"
-                      ? "text-gray-300"
-                      : ""
+                    window.location.pathname === "/" ? "text-gray-300" : ""
                   }`}
                 >
                   Logout
@@ -320,7 +270,13 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
           </div>
         </div>
       )}
-      {isProfileModalOpen && <UserProfileModal user={userData} isOpen={isProfileModalOpen} onClose={handleCloseProfileModal} />}
+      {isProfileModalOpen && (
+        <UserProfileModal
+          user={userData}
+          isOpen={isProfileModalOpen}
+          onClose={handleCloseProfileModal}
+        />
+      )}
     </nav>
   );
 };

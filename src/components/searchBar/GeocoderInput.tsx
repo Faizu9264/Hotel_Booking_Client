@@ -1,14 +1,11 @@
-
-
-
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface GeocoderInputProps {
   onSearch: (location: string) => void;
 }
 
 const GeocoderInput: React.FC<GeocoderInputProps> = ({ onSearch }) => {
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const handleSearch = () => {
     onSearch(searchValue);
@@ -19,22 +16,23 @@ const GeocoderInput: React.FC<GeocoderInputProps> = ({ onSearch }) => {
   };
 
   return (
-    <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}>
+    <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1 }}>
       <input
-      style={{padding: '4px'}}
+        style={{ padding: "4px" }}
         type="text"
         placeholder="Search location"
         value={searchValue}
         onChange={handleInputChange}
       />
-    <button className="bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer"
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer"
         style={{
-          marginLeft: '5px', 
-          padding: '5px 10px', 
-          color: 'white', 
-          border: 'none', 
-          borderRadius: '3px', 
-          cursor: 'pointer', 
+          marginLeft: "5px",
+          padding: "5px 10px",
+          color: "white",
+          border: "none",
+          borderRadius: "3px",
+          cursor: "pointer",
         }}
         onClick={handleSearch}
       >
@@ -45,5 +43,3 @@ const GeocoderInput: React.FC<GeocoderInputProps> = ({ onSearch }) => {
 };
 
 export default GeocoderInput;
-
-

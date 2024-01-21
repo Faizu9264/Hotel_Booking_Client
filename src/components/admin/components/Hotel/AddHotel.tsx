@@ -1,20 +1,23 @@
-
-
-
-import { Box, Button, Container, Stack, Step, StepButton, Stepper } from '@mui/material';
-import { Send } from '@mui/icons-material';
-import { useEffect, useState } from 'react';
-import AddImages from '../../../../components/admin/components/Images/AddImages';
-import AddLocation from '../location/AddLocation';
-import AddDetails from '../Details/AddDetails';
-import adminApi from '../../../../services/adminApi';
-import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import { useValue } from '../../../../context/ContextProvider';
-import { setHotels, setAddressFilter, setPriceFilter, clearAddress } from '../../../../redux/slices/hotelSlice';
-import { RootState } from 'src/redux/store';
-import { useDispatch, useSelector } from 'react-redux';
-
+import {
+  Box,
+  Button,
+  Container,
+  Stack,
+  Step,
+  StepButton,
+  Stepper,
+} from "@mui/material";
+import { Send } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import AddImages from "../../../../components/admin/components/Images/AddImages";
+import AddLocation from "../location/AddLocation";
+import AddDetails from "../Details/AddDetails";
+import adminApi from "../../../../services/adminApi";
+import { ToastContainer, toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useValue } from "../../../../context/ContextProvider";
+import { RootState } from "src/redux/store";
+import { useSelector } from "react-redux";
 
 const AddHotel = () => {
   const {
@@ -23,29 +26,32 @@ const AddHotel = () => {
   } = useValue();
   const [activeStep, setActiveStep] = useState(0);
   const [steps, setSteps] = useState([
-    { label: 'Location', completed: false },
-    { label: 'Details', completed: false },
-    { label: 'Images', completed: false },
+    { label: "Location", completed: false },
+    { label: "Details", completed: false },
+    { label: "Images", completed: false },
   ]);
   const [showSubmit, setShowSubmit] = useState(false);
   const navigate = useNavigate();
-  const isEditMode = Boolean(new URLSearchParams(window.location.search).get('hotelId'));
-  const hotelId = new URLSearchParams(window.location.search).get('hotelId');
-  console.log('hotelId:', typeof hotelId, hotelId);
+  const isEditMode = Boolean(
+    new URLSearchParams(window.location.search).get("hotelId")
+  );
+  const hotelId = new URLSearchParams(window.location.search).get("hotelId");
   const hotels = useSelector((state: RootState) => state.hotel.hotels);
   const state = useSelector((state: RootState) => state.hotel);
   useEffect(() => {
     if (isEditMode && hotelId && hotels.length > 0) {
       const hotelToUpdate = hotels.find((hotel: any) => hotel._id === hotelId);
-  
+
       if (hotelToUpdate) {
-        // Update the state with the fetched details
         dispatch({
-          type: 'UPDATE_LOCATION',
-          payload: { lat: hotelToUpdate.location?.lat, lng: hotelToUpdate.location?.lng },
+          type: "UPDATE_LOCATION",
+          payload: {
+            lat: hotelToUpdate.location?.lat,
+            lng: hotelToUpdate.location?.lng,
+          },
         });
         dispatch({
-          type: 'UPDATE_DETAILS',
+          type: "UPDATE_DETAILS",
           payload: {
             hotelName: hotelToUpdate.details?.hotelName,
             minRent: hotelToUpdate.details?.minRent,
@@ -56,13 +62,12 @@ const AddHotel = () => {
           },
         });
         dispatch({
-          type: 'UPDATE_IMAGES',
+          type: "UPDATE_IMAGES",
           payload: hotelToUpdate.images,
         });
       }
     }
-    
-  }, [isEditMode, hotelId, dispatch,hotels]);
+  }, [isEditMode, hotelId, dispatch, hotels]);
 
   useEffect(() => {
     if (images.length) {
@@ -139,42 +144,42 @@ const AddHotel = () => {
       },
       images,
     };
-  
+
     try {
       if (isEditMode) {
-        console.log('hotelDetails',hotelDetails);
-        
-        // If in edit mode, update the existing hotel
         await adminApi.updateHotel(hotelId!, hotelDetails);
-      
-        // Dispatch an action to update the hotel details in the state
-        dispatch({ type: 'SET_HOTEL_DETAILS', payload: hotelDetails });
-    
-        toast.success('Hotel updated successfully');
+
+        dispatch({ type: "SET_HOTEL_DETAILS", payload: hotelDetails });
+
+        toast.success("Hotel updated successfully");
       } else {
-        // If not in edit mode, create a new hotel
         await adminApi.createHotel(hotelDetails);
-    
-        toast.success('Hotel created successfully');
+
+        toast.success("Hotel created successfully");
       }
-  
+
       setTimeout(() => {
-        navigate('/admin/dashboard/hotels');
+        navigate("/admin/dashboard/hotels");
       }, 3000);
     } catch (error) {
-      toast.error(isEditMode ? 'Error updating hotel' : 'Error creating hotel');
+      toast.error(isEditMode ? "Error updating hotel" : "Error creating hotel");
     }
-  
-    console.log(hotelDetails, 'hotel');
   };
 
   return (
     <Container sx={{ my: 4 }}>
       <ToastContainer />
-      <Stepper alternativeLabel nonLinear activeStep={activeStep} sx={{ mb: 3 }}>
+      <Stepper
+        alternativeLabel
+        nonLinear
+        activeStep={activeStep}
+        sx={{ mb: 3 }}
+      >
         {steps.map((step, index) => (
           <Step key={step.label} completed={step.completed}>
-            <StepButton onClick={() => setActiveStep(index)}>{step.label}</StepButton>
+            <StepButton onClick={() => setActiveStep(index)}>
+              {step.label}
+            </StepButton>
           </Step>
         ))}
       </Stepper>
@@ -182,7 +187,7 @@ const AddHotel = () => {
         {activeStep === 0 && <AddLocation />}
         {activeStep === 1 && <AddDetails />}
         {activeStep === 2 && <AddImages />}
-        <Stack direction="row" sx={{ pt: 2, justifyContent: 'space-around' }}>
+        <Stack direction="row" sx={{ pt: 2, justifyContent: "space-around" }}>
           <Button
             color="inherit"
             disabled={activeStep === 0}
@@ -195,13 +200,21 @@ const AddHotel = () => {
           </Button>
         </Stack>
         {showSubmit && (
-          <Stack sx={{ alignItems: 'center' }}>
+          <Stack sx={{ alignItems: "center" }}>
             {isEditMode ? (
-              <Button variant="contained" endIcon={<Send />} onClick={handleSubmit}>
+              <Button
+                variant="contained"
+                endIcon={<Send />}
+                onClick={handleSubmit}
+              >
                 Update
               </Button>
             ) : (
-              <Button variant="contained" endIcon={<Send />} onClick={handleSubmit}>
+              <Button
+                variant="contained"
+                endIcon={<Send />}
+                onClick={handleSubmit}
+              >
                 Submit
               </Button>
             )}
@@ -211,6 +224,5 @@ const AddHotel = () => {
     </Container>
   );
 };
-
 
 export default AddHotel;

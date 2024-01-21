@@ -1,31 +1,28 @@
 // src/types/authTypes.ts
 export interface UserData {
-  _id:string;
+  _id: string;
   username: string;
   email: string;
   password?: string;
-  phoneNumber?:number;
-  token?:string;
-  isGoogle?:boolean
+  phoneNumber?: number;
+  token?: string;
+  isGoogle?: boolean;
   confirmPassword?: string;
   profileImage?: string;
   blocked?: boolean;
 }
 
-
 export interface AdminData {
   id: string;
   username: string;
-  isAdminLoggedIn:boolean;
+  isAdminLoggedIn: boolean;
 }
 
-
-
-import { AnyAction } from 'redux';
+import { AnyAction } from "redux";
 
 export type AuthActionTypes =
-  | { type: 'SET_USER_DATA'; payload: Partial<UserData> }
-  | { type: 'CLEAR_USER_DATA' }
-  | { type: 'SET_LOGIN_STATUS'; payload: boolean };
+  | { type: "SET_USER_DATA"; payload: Partial<UserData> }
+  | { type: "CLEAR_USER_DATA" }
+  | { type: "SET_LOGIN_STATUS"; payload: boolean };
 
 export type AuthAction = AuthActionTypes | AnyAction;

@@ -1,12 +1,14 @@
+import React, { useState, ChangeEvent } from "react";
+import {
+  Avatar,
+  InputAdornment,
+  TextField,
+  TextFieldProps,
+} from "@mui/material";
+import { Check } from "@mui/icons-material";
+import { useValue } from "../../../../context/ContextProvider";
 
-
-
-import React, { useState, ChangeEvent } from 'react';
-import { Avatar, InputAdornment, TextField, TextFieldProps } from '@mui/material';
-import { Check } from '@mui/icons-material';
-import { useValue } from '../../../../context/ContextProvider';
-
-interface InfoFieldProps extends Omit<TextFieldProps, 'onChange'> {
+interface InfoFieldProps extends Omit<TextFieldProps, "onChange"> {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   minLength: number;
   optionalProps?: TextFieldProps;
@@ -14,7 +16,12 @@ interface InfoFieldProps extends Omit<TextFieldProps, 'onChange'> {
 
 let timer: NodeJS.Timeout;
 
-const InfoField: React.FC<InfoFieldProps> = ({ onChange, minLength, optionalProps, ...props }) => {
+const InfoField: React.FC<InfoFieldProps> = ({
+  onChange,
+  minLength,
+  optionalProps,
+  ...props
+}) => {
   const { dispatch } = useValue();
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState(false);
@@ -22,11 +29,11 @@ const InfoField: React.FC<InfoFieldProps> = ({ onChange, minLength, optionalProp
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (onChange) {
-      onChange(e); // Call the provided onChange prop if it exists
+      onChange(e);
     }
 
     dispatch({
-      type: 'UPDATE_DETAILS',
+      type: "UPDATE_DETAILS",
       payload: { [e.target.name]: e.target.value },
     });
     if (!editing) setEditing(true);
@@ -49,7 +56,7 @@ const InfoField: React.FC<InfoFieldProps> = ({ onChange, minLength, optionalProp
       {...optionalProps}
       error={error}
       helperText={error && `This field must be ${minLength} characters or more`}
-      color={success ? 'success' : 'primary'}
+      color={success ? "success" : "primary"}
       variant="outlined"
       onChange={handleChange}
       required
@@ -57,7 +64,7 @@ const InfoField: React.FC<InfoFieldProps> = ({ onChange, minLength, optionalProp
         endAdornment: (
           <InputAdornment position="end">
             {editing ? (
-              <Avatar src='' sx={{ height: 40 }} />
+              <Avatar src="" sx={{ height: 40 }} />
             ) : (
               success && <Check color="success" />
             )}
@@ -69,4 +76,3 @@ const InfoField: React.FC<InfoFieldProps> = ({ onChange, minLength, optionalProp
 };
 
 export default InfoField;
-

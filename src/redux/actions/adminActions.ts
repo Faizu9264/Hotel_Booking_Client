@@ -1,8 +1,7 @@
 // redux/actions/adminActions.ts
 import { AnyAction } from 'redux';
 import { AdminData } from '../../types/authTypes';  
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import adminApi from '../../services/adminApi'
+
 
 export const SET_ADMIN_DATA = 'SET_ADMIN_DATA';
 export const CLEAR_ADMIN_DATA = 'CLEAR_ADMIN_DATA';

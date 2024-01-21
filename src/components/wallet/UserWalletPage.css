@@ -1,0 +1,38 @@
+/* UserWalletPage.css */
+.user-wallet-container {
+  background-color: #E0F7FA;
+}
+
+.wallet-logo {
+  width: 100px;
+}
+
+.wallet-balance {
+  margin-right: 100px;
+}
+
+.wallet-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.custom-outlined-button {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.custom-outlined-button:hover {
+  background-color: #2196F3;
+  color: #1b1b1b;
+}
+
+.wallet-history-toggle {
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.wallet-history-toggle:hover {
+  background-color: #2196F3;
+  color: #1b1b1b;
+}

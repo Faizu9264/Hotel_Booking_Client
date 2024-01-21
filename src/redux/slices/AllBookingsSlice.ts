@@ -17,6 +17,7 @@ export interface Booking {
   discountPrice: number;
   paymentStatus: string;
   BookingStatus: string;
+  userId:string;
   createdAt: string;
   RoomId: {
     id: string;
@@ -32,9 +33,6 @@ export interface Booking {
     images: string[];
   };
 }
-
-
-
 interface AllBookingsState {
   allBookings: Booking[];
   selectedBookingId: string | null;
@@ -44,8 +42,6 @@ const initialState: AllBookingsState = {
   allBookings: [],
   selectedBookingId: null,
 };
-
-
 const allBookingsSlice = createSlice({
   name: 'allBookings',
   initialState,
@@ -57,6 +53,7 @@ const allBookingsSlice = createSlice({
 
       state.allBookings = [...state.allBookings, ...uniqueBookings];
     },
+ 
     setSelectedBookingId: (state, action: PayloadAction<string | null>) => {
       state.selectedBookingId = action.payload;
     },

@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
-import Avatar from './Avatar';
-import SupportWindow from './SupportWindow/supportWindow';
+import React, { useRef, useEffect, useState } from "react";
+import Avatar from "./Avatar";
+import SupportWindow from "./SupportWindow/supportWindow";
 
 const SupportEngine: React.FC = () => {
   const [visible, setVisible] = useState(false);
@@ -13,17 +13,20 @@ const SupportEngine: React.FC = () => {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    
+    document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [ref]);
 
   return (
     <div ref={ref}>
       <SupportWindow visible={visible} />
-      <Avatar onClick={() => setVisible(true)} style={{ position: 'fixed', bottom: '24px', right: '24px' }} />
+      <Avatar
+        onClick={() => setVisible(true)}
+        style={{ position: "fixed", bottom: "24px", left: "24px" }}
+      />
     </div>
   );
 };
