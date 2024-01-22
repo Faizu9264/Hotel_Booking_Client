@@ -5,7 +5,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 export default defineConfig({
   plugins: [react()],
-  server:{
-    port:3000
-  }
+  server: {
+    port: 3000,
+  },
+  build: {
+    rollupOptions: {
+      external: ['@fortawesome/fontawesome-svg-core'],
+    },
+  },
 });
