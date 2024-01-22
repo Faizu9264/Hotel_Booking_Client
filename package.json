@@ -42,7 +42,6 @@
     "chart.js": "^4.4.1",
     "d3-scale": "^4.0.2",
     "date-fns": "^2.30.0",
-    "dotenv": "^16.3.1",
     "firebase": "^10.6.0",
     "gapi-script": "^1.2.0",
     "js-cookie": "^3.0.5",
@@ -95,7 +94,8 @@
     "swiper": "^8.2.2",
     "three": "^0.160.1",
     "timeago.js": "^4.0.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "vite-plugin-commonjs": "^0.10.1"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.9.0",
