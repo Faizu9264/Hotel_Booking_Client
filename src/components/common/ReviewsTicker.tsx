@@ -55,9 +55,11 @@ const ReviewsTicker: React.FC<ReviewsTickerProps> = ({ reviews }) => {
 
   return (
     <div className="reviews-ticker">
-      <Typography variant="h6" style={{ marginLeft: "15px" }} gutterBottom>
-        User Reviews
-      </Typography>
+    <Typography variant="h6" style={{ marginLeft: "15px", marginTop: '20px', color: '#333', fontSize: '20px', fontWeight: 'bold' }} gutterBottom>
+  User Reviews
+</Typography>
+
+
 
       <AnimatePresence initial={false}>
         <Box display="flex" flexWrap="wrap">

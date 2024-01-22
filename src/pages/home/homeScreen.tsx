@@ -40,8 +40,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ handleOpenProfileModal }) => {
 
   const fetchReviews = async () => {
     try {
-      const response = await api.getReviews();
-      setReviews(response);
+     
+        const response = await api.getReviews();
+        setReviews(response);
+      
     } catch (error) {
       console.error("Error fetching reviews:", error);
     }
