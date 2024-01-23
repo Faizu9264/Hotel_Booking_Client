@@ -173,6 +173,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({
           if (!numericValue || numericValue <= 0) {
             return "Please enter a valid amount.";
           }
+          return null
         },
       });
 

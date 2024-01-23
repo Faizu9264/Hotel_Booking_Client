@@ -38,7 +38,7 @@ const EmailForm: React.FC<EmailFormProps> = (props) => {
       .put(
         "https://api.chatengine.io/chats/",
         {
-          usernames: ["Faizu Rahman", email],
+          usernames: ["Faizu Rahman",email],
           is_direct_chat: true,
         },
         {
@@ -64,6 +64,7 @@ const EmailForm: React.FC<EmailFormProps> = (props) => {
     getOrCreateUser((user) => {
       props.setUser(user);
       getOrCreateChat((chat) => {
+        console.log('chat',chat)
         props.setChat(chat);
       });
     });

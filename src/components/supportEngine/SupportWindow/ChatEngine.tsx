@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChatEngineWrapper, ChatSocket, ChatFeed } from "react-chat-engine";
+import { ChatEngineWrapper, ChatSocket,Socket, ChatFeed } from "react-chat-engine";
 
 interface ChatEngineProps {
   visible: boolean;
@@ -16,6 +16,7 @@ interface ChatEngineProps {
 
 const ChatEngine: React.FC<ChatEngineProps> = (props) => {
   const [showChat, setShowChat] = useState(false);
+
   useEffect(() => {
     if (props.visible) {
       setTimeout(() => {
@@ -43,6 +44,8 @@ const ChatEngine: React.FC<ChatEngineProps> = (props) => {
           {props.user && (
             <ChatSocket
               projectID={import.meta.env.VITE_CE_PROJECT_ID}
+              // userName={props.user.email}
+              // userSecret={props.user.email}
               chatID={props.chat.chatID}
               chatAccessKey={props.chat.chatAccessKey}
               senderUsername={props.user.email || ""}
