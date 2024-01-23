@@ -1,15 +1,16 @@
-//vite.config.js
+import commonjs from 'vite-plugin-commonjs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), commonjs()],
   server: {
     port: 3000,
   },
   build: {
-    rollupOptions: {
-      external: ['@vitejs/plugin-commonjs'],
-    },
+    chunkSizeWarningLimit:1024*1500,
+    commonjsOptions: {
+      transformMixedEsModules: true
+    }
   },
 });
