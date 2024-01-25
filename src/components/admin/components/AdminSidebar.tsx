@@ -145,9 +145,9 @@ const Sidebar: React.FC = () => {
       <div className="h-screen flex-1 bg-gray-300 overflow-y-auto">
         <Navbar />
         <div className="mt-2 ml-2 mr-2 mb-2">
-          {url.pathname.startsWith("/admin/dashboard/mainDashboard") && (
+          {url.pathname === "/admin/dashboard/mainDashboard" &&
             <MainDashboard />
-          )}
+          }
           {url.pathname === "/admin/dashboard/hotels" && <HotelListingTable />}
           {url.pathname === "/admin/dashboard/addHotel" && <AddHotel />}
           {url.pathname.startsWith("/admin/dashboard/editHotel/") && (

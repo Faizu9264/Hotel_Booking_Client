@@ -144,15 +144,6 @@ const AdminLogin = () => {
             Sign in
           </button>
         </form>
-        <p className="text-center mt-3">
-          Forgot password ?{" "}
-          <span
-            onClick={() => navigate("/")}
-            className="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            Click
-          </span>
-        </p>
       </div>
     </main>
   );

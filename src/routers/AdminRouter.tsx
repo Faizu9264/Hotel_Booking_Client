@@ -39,7 +39,7 @@ const AdminRouter: React.FC = () => {
     return (
       <Routes>
         <Route
-          path="/"
+          path="/*"
           element={<Navigate to="/admin/dashboard/mainDashboard" />}
         />
         <Route path="dashboard/*" element={<AdminDashboard />} />
