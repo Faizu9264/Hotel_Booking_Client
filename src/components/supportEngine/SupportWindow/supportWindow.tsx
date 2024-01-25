@@ -16,7 +16,6 @@ const SupportWindow: React.FC<SupportWindowProps> = (props) => {
   const [user, setUser] = useState<User | null>(null);
   const [chat, setChat] = useState<any>(null);
   const handleChatResponse = (chatData: any) => {
-    console.log(chatData)
     setChat(chatData);
   };
   return (

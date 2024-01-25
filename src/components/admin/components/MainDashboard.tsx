@@ -54,7 +54,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Error caught by error boundary:", error, errorInfo);
     this.setState({ hasError: true });
   }
 
@@ -202,14 +201,11 @@ const MainDashboard = () => {
       sum += room.roomsCount || 0;
     });
 
-
     return sum;
   };
   useEffect(() => {
     const fetchData = async () => {
       try {
-   
-
         if (users.length <= 0) {
           dispatch(adminApi.getAllUsers());
         }

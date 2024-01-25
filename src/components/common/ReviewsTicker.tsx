@@ -18,7 +18,7 @@ const ReviewsTicker: React.FC<ReviewsTickerProps> = ({ reviews }) => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentReviewIndex((prevIndex) => (prevIndex + 1) % reviews.length);
-    }, 5000);
+    }, 60000);
 
     return () => clearInterval(intervalId);
   }, [reviews]);
@@ -55,7 +55,7 @@ const ReviewsTicker: React.FC<ReviewsTickerProps> = ({ reviews }) => {
 
   return (
     <div className="reviews-ticker">
-    <Typography variant="h6" style={{ marginLeft: "15px", marginTop: '20px', color: '#333', fontSize: '20px', fontWeight: 'bold' }} gutterBottom>
+    <Typography variant="h6" style={{ marginLeft: "33px", marginTop: '20px', color: '#333', fontSize: '20px', fontWeight: 'bold' }} gutterBottom>
   User Reviews
 </Typography>
 
@@ -76,9 +76,9 @@ const ReviewsTicker: React.FC<ReviewsTickerProps> = ({ reviews }) => {
               }}
               transition={{ duration: 0.5 }}
             >
-              <Paper
+            <Paper
                 elevation={3}
-                sx={{ padding: 3, margin: 2, width: "415px" }}
+                className="p-6 m-9  md:max-w-[415px] md:w-[375px] overflow-hidden"
               >
                 <Avatar src={review.profileImage} alt={`User ${index + 1}`} />
 

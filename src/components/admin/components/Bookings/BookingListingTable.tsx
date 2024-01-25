@@ -134,7 +134,6 @@ export const BookingListingTable: React.FC = () => {
 
   const approveBooking = async (bookingId: string) => {
     try {
-
       dispatch(adminApi.approveBooking(bookingId));
 
       dispatch(

@@ -37,6 +37,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ handleOpenProfileModal }) => {
   const userData = useSelector((state: RootState) => state.auth.user);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [title, setTitle] = useState<string>("");
+  const initialText = 'Your Hotel Booking Destination';
 
   const fetchReviews = async () => {
     try {
@@ -53,37 +54,22 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ handleOpenProfileModal }) => {
     fetchReviews();
   }, []);
 
+
   useEffect(() => {
-    let isMounted = true;
-    let intervalId: NodeJS.Timeout | null = null;
+    const restartIntervalId = setInterval(() => {
+      setTitle('');
+      let currentIndex = 0;
+      const newIntervalId = setInterval(() => {
+        setTitle(initialText.substring(0, currentIndex + 1));
+        currentIndex++;
 
-    const animatedTitle = (text: string) => {
-      setTitle("");
-      let index = 0;
-
-      intervalId = setInterval(() => {
-        if (isMounted) {
-          setTitle((prevTitle) => prevTitle + text[index]);
-          index++;
-
-          if (index === text.length - 1) {
-            clearInterval(intervalId!);
-            setTimeout(() => {
-              animatedTitle(" Your Hotel Booking Destination");
-            }, 2000);
-          }
-        } else {
-          clearInterval(intervalId!);
+        if (currentIndex === initialText.length) {
+          clearInterval(newIntervalId);
         }
-      }, 200);
-    };
+      }, 100); 
+    }, 5000);
 
-    animatedTitle(" Your Hotel Booking Destination ");
-
-    return () => {
-      isMounted = false;
-      clearInterval(intervalId!);
-    };
+    return () => clearInterval(restartIntervalId); 
   }, []);
 
   const handleCloseProfileModal = () => {
@@ -187,7 +173,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ handleOpenProfileModal }) => {
               >
                 <motion.h1
                   style={{
-                    fontSize: "2.5em",
+                    fontSize: "clamp(1rem, 5vw, 2rem)",
                     marginBottom: "16px",
                     color: "#fff",
                   }}
@@ -197,7 +183,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ handleOpenProfileModal }) => {
                 </motion.h1>
                 <motion.p
                   style={{
-                    fontSize: "1.7em",
+                    fontSize: "clamp(1rem, 3vw, 1.5rem)",
                     marginBottom: "24px",
                     color: "#fff",
                   }}

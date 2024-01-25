@@ -224,7 +224,17 @@ const Navbar: React.FC<{ user: UserData }> = ({ user }) => {
             >
               Home
             </NavLink>
-
+            <NavLink
+              to="/view-hotels"
+              onClick={handleViewHotels}
+              className={`text-white hover:text-gray-300 transition duration-300 ${
+                window.location.pathname === "/view-hotels"
+                  ? "border-b-2 border-white"
+                  : ""
+              }`}
+            >
+              Hotels
+            </NavLink>
             {userData && isLoggedIn && (
               <>
                 <NavLink
